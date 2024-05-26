@@ -1,7 +1,7 @@
+import Terminal from "@/components/Terminal";
+
 const HomePage: React.FC = () => {
-  return (
-    'Home'
-  );
+  return <Terminal></Terminal>;
 };
 
 export default HomePage;
