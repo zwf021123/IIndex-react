@@ -1,6 +1,6 @@
 import type { InputRef } from 'antd';
 import { Collapse, Input, Spin } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { Fragment, useRef, useState } from 'react';
 import './index.less';
 const { Panel } = Collapse;
 
@@ -12,14 +12,21 @@ type TerminalProps = {
   fullScreen?: boolean;
   height?: number;
   user?: User.UserType;
-  onSubmitCommand?: (inputText: string) => void;
+  onSubmitCommand: (inputText: string) => void;
 };
 
 const Terminal: React.FC<TerminalProps> = ({
   fullScreen = false,
   height = 400,
   user = LOCAL_USER,
+  onSubmitCommand,
 }: TerminalProps) => {
+  /**
+   * 命令列表
+   */
+  const [commandList, setCommandList] = useState<Terminal.CommandOutputType[]>(
+    [],
+  );
   /**
    * 输入框
    */
@@ -37,7 +44,7 @@ const Terminal: React.FC<TerminalProps> = ({
   /**
    * 折叠面板激活的 key
    */
-  const [activeKeys, setActiveKeys] = useState([]);
+  const [activeKeys, setActiveKeys] = useState<number[]>([]);
   /**
    * 加载状态(背景图)
    */
@@ -58,8 +65,31 @@ const Terminal: React.FC<TerminalProps> = ({
 
   const prompt = `user@${user.username}:~#`;
 
+  /**
+   * 全局记录当前命令，便于写入结果
+   */
+  let currentNewCommand: Terminal.CommandOutputType;
+
   const handleCoppapseChange = (key) => {
     setActiveKeys(key);
+  };
+
+  /**
+   * 输入框聚焦
+   */
+  const focusInput = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+  /**
+   * 当点击空白聚焦输入框
+   */
+  const handleClickWrapper = (event: React.MouseEvent) => {
+    //@ts-ignore
+    if (event.target.className === 'terminal') {
+      focusInput();
+    }
   };
 
   /**
@@ -68,7 +98,7 @@ const Terminal: React.FC<TerminalProps> = ({
    */
   const doSubmitCommand = async () => {
     setIsRunning(true);
-    setHint('');
+    // setHint('');
     let inputText = inputCommand.text;
     // 执行某条历史命令
     if (inputText.startsWith('!')) {
@@ -79,49 +109,34 @@ const Terminal: React.FC<TerminalProps> = ({
       }
     }
     // 执行命令(记录当前命令执行时的目录)
-    const newCommand: CommandOutputType = {
+    const newCommand: Terminal.CommandOutputType = {
       text: inputText,
       type: 'command',
       resultList: [],
-      dir: useSpaceStore().currentDir,
+      // dir: useSpaceStore().currentDir,
     };
     // 记录当前命令，便于写入结果
     currentNewCommand = newCommand;
     // 执行命令
-    await props.onSubmitCommand?.(inputText);
+    // await onSubmitCommand?.(inputText);
     // 添加输出（为空也要输出换行）
-    outputList.value.push(newCommand);
+    setOutputList([...outputList, newCommand]);
+
     // 不为空字符串才算是有效命令
     if (inputText) {
-      commandList.value.push(newCommand);
+      setCommandList([...commandList, newCommand]);
       // 重置当前要查看的命令位置
-      commandHistoryPos.value = commandList.value.length;
+      // commandHistoryPos = commandList.length;
     }
     // 重置
-    inputCommand.value = { ...initCommand };
+    setInputCommand({ ...initCommand });
     // 默认展开折叠面板
-    activeKeys.value.push(outputList.value.length - 1);
+    setActiveKeys([...activeKeys, outputList.length - 1]);
     // 自动滚到底部
-    setTimeout(() => {
-      terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-    }, 50);
-    isRunning.value = false;
-  };
-
-  /**
-   * 输入框聚焦
-   */
-  const focusInput = () => {
-    inputRef?.current?.focus();
-  };
-  /**
-   * 当点击空白聚焦输入框
-   */
-  const handleClickWrapper = (event: React.MouseEvent) => {
-    //@ts-ignore
-    if (event.target.className === 'terminal') {
-      focusInput();
-    }
+    // setTimeout(() => {
+    //   terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
+    // }, 50);
+    setIsRunning(false);
   };
 
   return (
@@ -159,13 +174,13 @@ const Terminal: React.FC<TerminalProps> = ({
                   className="terminal-row"
                 >
                   {output?.resultList?.map((result, idx) => (
-                    <div key={idx} className="terminal-row">
+                    <div key={`${index}-${idx}`} className="terminal-row">
                       <ContentOutput output={result} />
                     </div>
                   ))}
                 </Panel>
               ) : output.type === 'command' ? (
-                <>
+                <Fragment key={index}>
                   <div className="terminal-row">
                     <span style={{ userSelect: 'none', marginRight: '10px' }}>
                       {prompt}
@@ -173,13 +188,13 @@ const Terminal: React.FC<TerminalProps> = ({
                     <span>{output.text}</span>
                   </div>
                   {output?.resultList?.map((result, idx) => (
-                    <div key={idx} className="terminal-row">
+                    <div key={`${index}-${idx}`} className="terminal-row">
                       <ContentOutput output={result} />
                     </div>
                   ))}
-                </>
+                </Fragment>
               ) : (
-                <div className="terminal-row">
+                <div className="terminal-row" key={index}>
                   <ContentOutput output={output} />
                 </div>
               ),
@@ -193,10 +208,11 @@ const Terminal: React.FC<TerminalProps> = ({
               placeholder={inputCommand.placeholder}
               variant="borderless"
               autoFocus
+              value={inputCommand.text}
               addonBefore={
                 <span className="command-input-prompt">{prompt}</span>
               }
-              onChange={(e) => (inputCommand.text = e.target.value)}
+              onChange={(e) => setInputCommand({ text: e.target.value })}
               onPressEnter={doSubmitCommand}
             ></Input>
           </div>
