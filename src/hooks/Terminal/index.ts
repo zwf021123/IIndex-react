@@ -1,49 +1,20 @@
-import { useSnapshot } from '@umijs/max';
-import type { InputRef } from 'antd';
-import { Collapse, Input, Spin } from 'antd';
-import React, { Fragment, useEffect, useRef, useState } from 'react';
-import './index.less';
-const { Panel } = Collapse;
-
-import ContentOutput from '@/components/ContentOutput';
 import { initCommand } from '@/constants';
-import { LOCAL_USER } from '@/constants/user';
+import { useEffect, useState } from 'react';
+
 import { first, second } from '@/constants/welcome';
 import { useHint, useHistory } from '@/hooks';
-import { configStore } from '@/stores';
+import { likeSearch } from '@/utils/likeSearch';
 
-type TerminalProps = {
-  fullScreen?: boolean;
-  height?: number;
-  user?: User.UserType;
-  onSubmitCommand: (inputText: string) => void;
-};
-
-const Terminal: React.FC<TerminalProps> = ({
-  fullScreen = false,
-  height = 400,
-  user = LOCAL_USER,
-  onSubmitCommand,
-}: TerminalProps) => {
-  /**
-   * store
-   */
-  const configStoreSnap = useSnapshot(configStore);
-
-  /**
-   * states
-   */
-
+/**
+ * 核心terminal hook
+ */
+export const useTerminal = (inputRef) => {
   /**
    * 命令列表
    */
   const [commandList, setCommandList] = useState<Terminal.CommandOutputType[]>(
     [],
   );
-  /**
-   * 输入框
-   */
-  const inputRef = useRef<InputRef>(null);
   /**
    * 待输入命令
    */
@@ -80,47 +51,9 @@ const Terminal: React.FC<TerminalProps> = ({
   const { hintValue, command, setHintValue, debounceSetHint } = useHint();
 
   /**
-   *
-   */
-
-  const mainStyle: React.CSSProperties = fullScreen
-    ? { position: 'fixed', top: 0, bottom: 0, left: 0, right: 0 }
-    : { height: height + 'px' };
-
-  const wrapperStyle: React.CSSProperties = {
-    ...mainStyle,
-    background: `url(${configStoreSnap.background})  no-repeat center/cover`,
-    // 从配置中获取背景
-  };
-
-  const prompt = `user@${user.username}:~#`;
-
-  /**
    * 全局记录当前命令，便于写入结果
    */
   let currentNewCommand: Terminal.CommandOutputType;
-
-  const handleCoppapseChange = (key) => {
-    setActiveKeys(key);
-  };
-
-  /**
-   * 输入框聚焦
-   */
-  const focusInput = () => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  };
-  /**
-   * 当点击空白聚焦输入框
-   */
-  const handleClickWrapper = (event: React.MouseEvent) => {
-    //@ts-ignore
-    if (event.target.className === 'terminal') {
-      focusInput();
-    }
-  };
 
   /**
    * 核心
@@ -251,7 +184,7 @@ const Terminal: React.FC<TerminalProps> = ({
    */
   const isInputFocused = () => {
     return (
-      (inputRef.current?.input as HTMLInputElement) == document.activeElement
+      (inputRef.current?.input as HTMLInputElement) === document.activeElement
     );
   };
 
@@ -277,6 +210,15 @@ const Terminal: React.FC<TerminalProps> = ({
    */
   const clear = () => {
     setOutputList([]);
+  };
+
+  /**
+   * 输入框聚焦
+   */
+  const focusInput = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   };
 
   /**
@@ -346,23 +288,6 @@ const Terminal: React.FC<TerminalProps> = ({
   };
 
   /**
-   * 挂载时
-   */
-  useEffect(() => {
-    // registerShortcuts(terminal);
-    const { welcomeTexts } = configStoreSnap;
-    if (welcomeTexts?.length > 0) {
-      welcomeTexts.forEach((welcomeText) => {
-        terminal.writeTextOutput(welcomeText);
-      });
-    } else {
-      terminal.writeTextOutput(first);
-      terminal.writeTextOutput(second);
-      terminal.writeTextOutput('<br/>');
-    }
-  }, []);
-
-  /**
    * 操作终端的对象
    */
   const terminal: Terminal.TerminalType = {
@@ -385,89 +310,20 @@ const Terminal: React.FC<TerminalProps> = ({
     setLoading: setBackgroundSpinning,
   };
 
-  return (
-    <div
-      className="terminal-wrapper"
-      style={wrapperStyle}
-      onClick={(e) => handleClickWrapper(e)}
-    >
-      <Spin
-        className="loading"
-        tip="Loading..."
-        size="large"
-        spinning={backgroundSpinning}
-      >
-        <div className="terminal" style={mainStyle}>
-          <Collapse
-            activeKey={activeKeys}
-            onChange={handleCoppapseChange}
-            ghost
-            expandIconPosition="end"
-          >
-            {outputList.map((output, index) =>
-              output.collapsible ? (
-                // 可折叠内容
-                <Panel
-                  header={
-                    <>
-                      <span style={{ userSelect: 'none', marginRight: '10px' }}>
-                        {prompt}
-                      </span>
-                      <span>{output.text}</span>
-                    </>
-                  }
-                  key={index}
-                  className="terminal-row"
-                >
-                  {output?.resultList?.map((result, idx) => (
-                    <div key={`${index}-${idx}`} className="terminal-row">
-                      <ContentOutput output={result} />
-                    </div>
-                  ))}
-                </Panel>
-              ) : output.type === 'command' ? (
-                <Fragment key={index}>
-                  <div className="terminal-row">
-                    <span style={{ userSelect: 'none', marginRight: '10px' }}>
-                      {prompt}
-                    </span>
-                    <span>{output.text}</span>
-                  </div>
-                  {output?.resultList?.map((result, idx) => (
-                    <div key={`${index}-${idx}`} className="terminal-row">
-                      <ContentOutput output={result} />
-                    </div>
-                  ))}
-                </Fragment>
-              ) : (
-                <div className="terminal-row" key={index}>
-                  <ContentOutput output={output} />
-                </div>
-              ),
-            )}
-          </Collapse>
-          <div className="terminal-row">
-            <Input
-              ref={inputRef}
-              className="command-input"
-              disabled={isRunning}
-              placeholder={inputCommand.placeholder}
-              variant="borderless"
-              autoFocus
-              value={inputCommand.text}
-              addonBefore={
-                <span className="command-input-prompt">{prompt}</span>
-              }
-              onChange={(e) => setInputCommand({ text: e.target.value })}
-              onPressEnter={doSubmitCommand}
-            ></Input>
-          </div>
-          <div>hint</div>
-          <div style={{ marginBottom: 16 }} />
-        </div>
-      </Spin>
-    </div>
-  );
+  /**
+   * 挂载时
+   */
+  useEffect(() => {
+    // registerShortcuts(terminal);
+    const { welcomeTexts } = configStoreSnap;
+    if (welcomeTexts?.length > 0) {
+      welcomeTexts.forEach((welcomeText) => {
+        terminal.writeTextOutput(welcomeText);
+      });
+    } else {
+      terminal.writeTextOutput(first);
+      terminal.writeTextOutput(second);
+      terminal.writeTextOutput('<br/>');
+    }
+  }, []);
 };
-
-export default Terminal;
