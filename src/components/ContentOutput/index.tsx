@@ -17,7 +17,9 @@ const ContentOutput: React.FC<OutputProps> = ({ output }: OutputProps) => {
       {output.text ? (
         <>
           {outputTagColor && <Tag color={outputTagColor}>{output.status}</Tag>}
-          <span>{smartText(output.text)}</span>
+          <span
+            dangerouslySetInnerHTML={{ __html: smartText(output.text) }}
+          ></span>
         </>
       ) : (
         output.component && (
