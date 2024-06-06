@@ -1,4 +1,4 @@
-import { CommandOptionType, CommandType } from "@/types/command";
+import { Command, CommandOptionType } from '@/types/command';
 
 /**
  * 拼接用法字符串
@@ -6,15 +6,15 @@ import { CommandOptionType, CommandType } from "@/types/command";
  * @param parentCommand
  */
 export const getUsageStr = (
-  command: CommandType,
-  parentCommand?: CommandType
+  command: Command.CommandType,
+  parentCommand?: Command.CommandType,
 ) => {
   if (!command) {
-    return "";
+    return '';
   }
-  let str = "";
+  let str = '';
   if (parentCommand) {
-    str = parentCommand.func + " ";
+    str = parentCommand.func + ' ';
   }
   str += command.func;
   if (command.params && command.params.length > 0) {
@@ -29,12 +29,12 @@ export const getUsageStr = (
         return `[${word}]`;
       }
     });
-    str += " " + paramsStrList.join(" ");
+    str += ' ' + paramsStrList.join(' ');
   }
   if (command.options?.length > 0) {
     const optionStrList: string[] = command.options.map((option) => {
       const optionKey = getOptionKey(option);
-      if (option.type === "boolean") {
+      if (option.type === 'boolean') {
         let word = optionKey;
         if (option.desc) {
           word += ` ${option.desc}`;
@@ -56,7 +56,7 @@ export const getUsageStr = (
         }
       }
     });
-    str += " " + optionStrList.join(" ");
+    str += ' ' + optionStrList.join(' ');
   }
   return str;
 };
@@ -68,9 +68,9 @@ export const getUsageStr = (
 export const getOptionKey = (option: CommandOptionType) => {
   // 优先用简写
   if (option.alias && option.alias.length > 0) {
-    return "-" + option.alias[0];
+    return '-' + option.alias[0];
   }
-  return "--" + option.key;
+  return '--' + option.key;
 };
 
 /**
@@ -81,8 +81,8 @@ export const getOptionKeyList = (option: CommandOptionType) => {
   const list = [];
   // 优先用简写
   if (option.alias && option.alias.length > 0) {
-    list.push("-" + option.alias[0]);
+    list.push('-' + option.alias[0]);
   }
-  list.push("--" + option.key);
+  list.push('--' + option.key);
   return list;
 };

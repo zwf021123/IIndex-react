@@ -1,5 +1,6 @@
 import { getCurrentSpace } from '@/api/space';
 import { pathReg } from '@/constants/regExp';
+import { isValidKey } from '@/utils/tools';
 import { proxy } from '@umijs/max';
 import _ from 'lodash';
 
@@ -97,7 +98,9 @@ export const spaceActions = {
   resetSpace() {
     const resetObj = _.cloneDeep(initSpace);
     Object.keys(resetObj).forEach((key: string) => {
-      spaceStore[key] = resetObj[key];
+      if (isValidKey(key, spaceStore)) {
+        spaceStore[key] = resetObj[key];
+      }
     });
   },
   /**
@@ -522,4 +525,11 @@ export const spaceActions = {
     }
     return '';
   },
+};
+
+export const SpaceStore = () => {
+  return {
+    ...spaceStore,
+    ...spaceActions,
+  };
 };

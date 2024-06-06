@@ -1,5 +1,4 @@
-import { useSpaceStore } from '@/stores';
-import { CommandType } from '../command';
+import { spaceActions } from '@/stores';
 
 /**
  * 跳转命令
@@ -33,7 +32,7 @@ export default {
     }
     let link = _[0];
     // 优先找空间条目链接(即允许直接输入空间条目的name进行跳转)
-    let { getItem } = useSpaceStore();
+    let { getItem } = spaceActions;
     const item = getItem(link);
     if (item?.link) {
       link = item?.link;
@@ -47,4 +46,4 @@ export default {
       window.open(link);
     }
   },
-} as CommandType;
+} as Command.CommandType;

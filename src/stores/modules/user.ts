@@ -12,7 +12,7 @@ export const userStore = proxy(
 
 export const userActions = {
   async getAndSetLoginUser() {
-    // const { requestSpace } = useSpaceStore();
+    // const { requestSpace } = SpaceStore();
     const res: any = await getLoginUser();
     if (res?.code === 0 && res.data) {
       userStore.loginUser = res.data;
@@ -38,3 +38,10 @@ subscribe(userStore, () => {
   console.log('userStore changed', userStore);
   localStorage.setItem('user-store', JSON.stringify(userStore));
 });
+
+export const UserStore = () => {
+  return {
+    ...userActions,
+    ...userStore,
+  };
+};

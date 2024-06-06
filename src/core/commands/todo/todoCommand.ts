@@ -1,20 +1,19 @@
-import { CommandType } from "@/types/command";
-import { defineAsyncComponent } from "vue";
-import ComponentOutputType = YuTerminal.ComponentOutputType;
-import addCommand from "./subCommands/addCommand";
+import { defineAsyncComponent } from 'vue';
+import addCommand from './subCommands/addCommand';
+type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
  * 待办事项命令
  * @author zwf021123
  */
-const todoCommand: CommandType = {
-  func: "todo",
-  name: "待办事项",
-  desc: "记录和管理任务",
+const todoCommand: Command.CommandType = {
+  func: 'todo',
+  name: '待办事项',
+  desc: '记录和管理任务',
   params: [
     {
-      key: "subCommand",
-      desc: "子命令",
+      key: 'subCommand',
+      desc: '子命令',
       required: true,
     },
   ],
@@ -27,8 +26,8 @@ const todoCommand: CommandType = {
     const { _ } = options;
     if (_.length < 1) {
       const output: ComponentOutputType = {
-        type: "component",
-        component: defineAsyncComponent(() => import("./TodoBox.vue")),
+        type: 'component',
+        component: defineAsyncComponent(() => import('./TodoBox.vue')),
       };
       terminal.writeResult(output);
       return;

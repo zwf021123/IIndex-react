@@ -8,7 +8,7 @@ const useUser = {
   effects: {
     *getAndSetLoginUser({ payload }, { put }) {
       // 从space store中获取请求space的方法
-      // const { requestSpace } = useSpaceStore();
+      // const { requestSpace } = SpaceStore();
       const res = yield getLoginUser();
     },
   },

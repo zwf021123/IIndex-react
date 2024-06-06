@@ -1,13 +1,11 @@
-import { CommandType } from "@/types/command";
-
 /**
  * 查看历史命令
  * @author zwf021123
  */
-export const historyCommand: CommandType = {
-  func: "history",
-  name: "查看执行历史",
-  alias: ["h"],
+export const historyCommand: Command.CommandType = {
+  func: 'history',
+  name: '查看执行历史',
+  alias: ['h'],
   options: [],
   collapsible: true,
   action(options, terminal): void {

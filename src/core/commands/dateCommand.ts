@@ -1,11 +1,10 @@
 import myDayjs from '@/utils/myDayjs';
-import { CommandType } from '../command';
 
 /**
  * 日期命令
  * @author zwf021123
  */
-const dateCommand: CommandType = {
+const dateCommand: Command.CommandType = {
   func: 'date',
   name: '日期',
   options: [],

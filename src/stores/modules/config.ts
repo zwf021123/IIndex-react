@@ -63,6 +63,14 @@ export const configActions = {
     });
   },
 };
+
+export const TerminalConfigStore = () => {
+  return {
+    ...configActions,
+    ...configStore,
+  };
+};
+
 // 订阅
 subscribe(configStore, () => {
   console.log('configStore changed', configStore);

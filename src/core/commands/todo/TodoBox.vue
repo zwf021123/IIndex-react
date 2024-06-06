@@ -15,7 +15,7 @@
               </template>
               <template #description>
                 创建时间：{{
-                  MyDayjs(item.createTime).format("YYYY-MM-DD HH:mm:ss")
+                  MyDayjs(item.createTime).format('YYYY-MM-DD HH:mm:ss')
                 }}
               </template>
               <template #avatar>
@@ -30,9 +30,9 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from "vue";
-import { useTodoStore } from "@/stores";
-import MyDayjs from "../../../plugins/myDayjs";
+import { toRefs } from 'vue';
+import { TodoStore } from '@/stores';
+import MyDayjs from '../../../plugins/myDayjs';
 
 interface TodoBoxProps {
   today: boolean;
@@ -41,7 +41,7 @@ interface TodoBoxProps {
 const props = withDefaults(defineProps<TodoBoxProps>(), {});
 const { today } = toRefs(props);
 
-const { taskList, deleteTask } = useTodoStore();
+const { taskList, deleteTask } = TodoStore();
 
 const doDelete = (index: number) => {
   deleteTask(index);

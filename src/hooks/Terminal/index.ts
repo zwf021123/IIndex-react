@@ -280,7 +280,7 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
       text: inputText,
       type: 'command',
       resultList: [],
-      // dir: useSpaceStore().currentDir,
+      // dir: SpaceStore().currentDir,
     };
     // 记录当前命令，便于写入结果
     currentNewCommand = newCommand;

@@ -1,5 +1,5 @@
-import { ParsedOptions } from 'getopts';
-type TerminalType = YuTerminal.TerminalType;
+/// <reference types="getopts" />
+type TerminalType = Terminal.TerminalType;
 
 declare namespace Command {
   /**

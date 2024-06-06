@@ -1,4 +1,3 @@
-import { CommandType } from './command';
 import dateCommand from './commands/dateCommand';
 import ddosCommand from './commands/ddos/ddosCommand';
 import gotoCommand from './commands/gotoCommand';
@@ -27,7 +26,7 @@ import varbookCommand from './commands/varbook/varbookCommand';
 /**
  * 命令列表（数组元素顺序会影响 help 命令的展示顺序，命令命名会影响提示）
  */
-const commandList: CommandType[] = [
+const commandList: Command.CommandType[] = [
   shortcutCommand,
   gotoCommand,
   ...searchCommands,
@@ -57,7 +56,7 @@ const commandList: CommandType[] = [
  * 命令字典
  * 将命令的 func（或其他别名） 作为 key，方便查找
  */
-const commandMap: Record<string, CommandType> = {};
+const commandMap: Record<string, Command.CommandType> = {};
 
 commandList.forEach((command) => {
   commandMap[command.func] = command;

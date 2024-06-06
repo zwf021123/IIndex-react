@@ -6,7 +6,7 @@ import { configStore } from '@/stores';
  * 切换终端背景
  * @author zwf021123
  */
-export const backgroundCommand: Command.CommandType = {
+export const backgroundCommand: Command.Command.CommandType = {
   func: 'background',
   name: '切换终端背景',
   alias: ['bg'],

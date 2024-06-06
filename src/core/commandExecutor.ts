@@ -1,5 +1,5 @@
+import { isValidKey } from '@/utils/tools';
 import getopts, { ParsedOptions } from 'getopts';
-import { CommandOptionType, CommandType } from './command';
 import { commandMap } from './commandRegister';
 import { helpCommand } from './commands/terminal/help/helpCommand';
 type TerminalType = Terminal.TerminalType;
@@ -9,7 +9,10 @@ type TerminalType = Terminal.TerminalType;
  * @param text
  * @param parentCommand
  */
-const getCommand = (text: string, parentCommand?: CommandType): CommandType => {
+const getCommand = (
+  text: string,
+  parentCommand?: Command.CommandType,
+): Command.CommandType => {
   let func = text.split(' ', 1)[0];
   // 大小写无关
   func = func.toLowerCase();
@@ -34,7 +37,7 @@ const getCommand = (text: string, parentCommand?: CommandType): CommandType => {
  */
 const doParse = (
   text: string,
-  commandOptions: CommandOptionType[],
+  commandOptions: Command.CommandOptionType[],
 ): getopts.ParsedOptions => {
   // 过滤掉关键词
   const args: string[] = text.split(' ').slice(1);
@@ -50,7 +53,9 @@ const doParse = (
     if (alias && options.alias) {
       options.alias[key] = alias;
     }
-    options[type]?.push(key);
+    if (isValidKey(type, options)) {
+      (options[type] as any[]).push(key);
+    }
     if (defaultValue && options.default) {
       options.default[key] = defaultValue;
     }
@@ -68,10 +73,10 @@ const doParse = (
  * @param parentCommand
  */
 const doAction = async (
-  command: CommandType,
+  command: Command.CommandType,
   options: ParsedOptions,
   terminal: TerminalType,
-  parentCommand?: CommandType,
+  parentCommand?: Command.CommandType,
 ) => {
   const { help } = options;
   // 设置输出折叠
@@ -97,7 +102,7 @@ const doAction = async (
 export const doCommandExecute = async (
   text: string,
   terminal: TerminalType,
-  parentCommand?: CommandType,
+  parentCommand?: Command.CommandType,
 ) => {
   //去除命令首尾空格
   let formatText = text.trim();
@@ -105,7 +110,7 @@ export const doCommandExecute = async (
     return;
   }
   // 解析文本，得到命令
-  const command: CommandType = getCommand(formatText, parentCommand);
+  const command: Command.CommandType = getCommand(formatText, parentCommand);
   if (!command) {
     terminal.writeTextErrorResult('找不到命令');
     return;

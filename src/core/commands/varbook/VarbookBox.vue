@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div :class="['main', variablesTable.source ? 'success' : 'warning']">
     <a-spin
       :spinning="!loadOK"
@@ -23,11 +23,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, toRefs } from "vue";
-import { getNamedVariables } from "@/api/translate";
-import { parseNamedVariable } from "./standard";
-import ContentOutput from "@/components/yu-terminal/ContentOutput.vue";
-import OutputType = YuTerminal.OutputType;
+import { reactive, ref, toRefs } from 'vue';
+import { getNamedVariables } from '@/api/translate';
+import { parseNamedVariable } from './standard';
+import ContentOutput from '@/components/yu-terminal/ContentOutput.vue';
+import OutputType = Terminal.OutputType;
 
 interface VariableBoxProps {
   searchText: string;
@@ -39,9 +39,9 @@ const { searchText } = toRefs(props);
 const variablesTable = ref<any>({});
 const loadOK = ref(false);
 const output = reactive<OutputType>({
-  type: "text",
-  status: "warning",
-  text: "",
+  type: 'text',
+  status: 'warning',
+  text: '',
 });
 
 getNamedVariables(searchText.value)
@@ -52,7 +52,7 @@ getNamedVariables(searchText.value)
       : (output.text = msg);
   })
   .catch((err: any) => {
-    output.text = "服务器扛不住了，请稍后再试";
+    output.text = '服务器扛不住了，请稍后再试';
   })
   .finally(() => {
     loadOK.value = true;
@@ -80,4 +80,4 @@ getNamedVariables(searchText.value)
   box-shadow: 2px 3px 3px 1px #8b8b8b59;
 }
 </style>
-./hooks/api/translate ../../../api/translate ./standard/standard
+./hooks/api/translate ../../../api/translate ./standard/standard -->

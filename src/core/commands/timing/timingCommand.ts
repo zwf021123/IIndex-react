@@ -1,32 +1,30 @@
-import { CommandType } from "@/types/command";
-import { defineAsyncComponent } from "vue";
-import ComponentOutputType = YuTerminal.ComponentOutputType;
+type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
  * 定时命令
  * @author zwf021123
  */
-const timingCommand: CommandType = {
-  func: "timing",
-  name: "定时器",
+const timingCommand: Command.CommandType = {
+  func: 'timing',
+  name: '定时器',
   options: [
     {
-      key: "seconds",
-      desc: "秒数",
-      alias: ["s"],
-      type: "string",
+      key: 'seconds',
+      desc: '秒数',
+      alias: ['s'],
+      type: 'string',
       required: true,
     },
   ],
   action(options, terminal) {
-    const { _, seconds } = options;
+    const { seconds } = options;
     if (!seconds) {
-      terminal.writeTextErrorResult("参数不足");
+      terminal.writeTextErrorResult('参数不足');
       return;
     }
     const output: ComponentOutputType = {
-      type: "component",
-      component: defineAsyncComponent(() => import("./TimingBox.vue")),
+      type: 'component',
+      component: () => import('./TimingBox.vue'),
       props: {
         seconds,
       },

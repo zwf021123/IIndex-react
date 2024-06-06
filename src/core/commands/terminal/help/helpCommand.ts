@@ -1,20 +1,19 @@
-import { CommandType } from "@/types/command";
-import { defineAsyncComponent } from "vue";
-import { commandMap } from "../../../commandRegister";
-import ComponentOutputType = YuTerminal.ComponentOutputType;
+import { defineAsyncComponent } from 'vue';
+import { commandMap } from '../../../commandRegister';
+type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
  * 帮助命令
  * @author zwf021123
  */
-export const helpCommand: CommandType = {
-  func: "help",
-  name: "查看帮助",
-  alias: ["man"],
+export const helpCommand: Command.CommandType = {
+  func: 'help',
+  name: '查看帮助',
+  alias: ['man'],
   params: [
     {
-      key: "commandName",
-      desc: "命令英文名称",
+      key: 'commandName',
+      desc: '命令英文名称',
     },
   ],
   options: [],
@@ -24,8 +23,8 @@ export const helpCommand: CommandType = {
     // 输出所有帮助（文档 + 命令列表）
     if (_.length < 1) {
       const output: ComponentOutputType = {
-        type: "component",
-        component: defineAsyncComponent(() => import("./HelpBox.vue")),
+        type: 'component',
+        component: defineAsyncComponent(() => import('./HelpBox.vue')),
       };
       terminal.writeResult(output);
       return;
@@ -43,12 +42,12 @@ export const helpCommand: CommandType = {
     }
     const command = commands[commandName];
     if (!command) {
-      terminal.writeTextErrorResult("找不到指定命令");
+      terminal.writeTextErrorResult('找不到指定命令');
       return;
     }
     const output: ComponentOutputType = {
-      type: "component",
-      component: defineAsyncComponent(() => import("./CommandHelpBox.vue")),
+      type: 'component',
+      component: defineAsyncComponent(() => import('./CommandHelpBox.vue')),
       props: {
         command,
         parentCommand,

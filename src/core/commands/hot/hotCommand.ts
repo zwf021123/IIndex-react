@@ -1,20 +1,19 @@
-import { CommandType } from "@/types/command";
-import { defineAsyncComponent } from "vue";
-import { listHotMusics } from "@/api/music";
-import ComponentOutputType = YuTerminal.ComponentOutputType;
+import { listHotMusics } from '@/api/music';
+import { defineAsyncComponent } from 'vue';
+type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
  * 热榜命令
  * @author zwf021123
  */
-const hotCommand: CommandType = {
-  func: "hot",
-  name: "热榜",
+const hotCommand: Command.CommandType = {
+  func: 'hot',
+  name: '热榜',
   alias: [],
   params: [
     {
-      key: "热榜类别",
-      desc: "要查询的热榜",
+      key: '热榜类别',
+      desc: '要查询的热榜',
       required: false,
     },
   ],
@@ -29,15 +28,15 @@ const hotCommand: CommandType = {
         songList = songs.slice(0, 10);
       }
       const output: ComponentOutputType = {
-        type: "component",
-        component: defineAsyncComponent(() => import("./HotBox.vue")),
+        type: 'component',
+        component: defineAsyncComponent(() => import('./HotBox.vue')),
         props: {
           songList,
         },
       };
       terminal.writeResult(output);
     } catch (err) {
-      terminal.writeTextErrorResult("获取热榜失败");
+      terminal.writeTextErrorResult('获取热榜失败');
     }
   },
 };

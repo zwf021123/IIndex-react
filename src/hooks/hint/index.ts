@@ -1,4 +1,4 @@
-import { useTerminalConfigStore } from '@/stores';
+import { configStore } from '@/stores';
 import _, { trim } from 'lodash';
 import { useState } from 'react';
 import { commandMap } from '../../core/commandRegister';
@@ -7,7 +7,7 @@ import { getUsageStr } from '../../core/commands/terminal/help/helpUtils';
 /**
  * 模糊查询
  */
-const likeSearch = (keyword: string, commandMapParam: Object = commandMap) => {
+const likeSearch = (keyword: string, commandMapParam = commandMap) => {
   // 大小写无关
   let func = keyword.toLowerCase();
   // 前缀匹配
@@ -25,7 +25,7 @@ export const useHint = () => {
   const [hintValue, setHintValue] = useState('');
   // 记录匹配到的命令（便于后续提示操作）
   let command = null;
-  const { showHint } = useTerminalConfigStore();
+  const { showHint } = configStore;
 
   const setHint = (inputText: string) => {
     // 未开启提示
@@ -53,10 +53,7 @@ export const useHint = () => {
     ) {
       // 模糊查询子命令func(这里只能满足存在父子命令的情况)
       const likeKey = likeSearch(args[1], command.subCommands);
-      const usageStr = getUsageStr(
-        command.value.subCommands[likeKey],
-        command.value,
-      );
+      const usageStr = getUsageStr(command.subCommands[likeKey], command);
       setHintValue(usageStr);
       // 获取提示后再更新command
       command = command.subCommands[likeKey];

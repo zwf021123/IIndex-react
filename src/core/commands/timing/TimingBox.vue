@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div>
     <div>倒计时：{{ seconds }} 秒</div>
     <div>
@@ -61,4 +61,4 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped></style> -->

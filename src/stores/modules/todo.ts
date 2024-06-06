@@ -59,3 +59,10 @@ subscribe(todoStore, () => {
   console.log('todoStore changed', todoStore);
   localStorage.setItem('todo-store', JSON.stringify(todoStore));
 });
+
+export const TodoStore = () => {
+  return {
+    ...todoActions,
+    ...todoStore,
+  };
+};
