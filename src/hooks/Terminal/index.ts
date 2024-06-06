@@ -1,14 +1,28 @@
 import { initCommand } from '@/constants';
-import { useEffect, useState } from 'react';
+import { useSnapshot } from '@umijs/max';
+import React, { useEffect, useState } from 'react';
 
 import { first, second } from '@/constants/welcome';
+import { doCommandExecute } from '@/core/commandExecutor';
 import { useHint, useHistory } from '@/hooks';
+import { configStore } from '@/stores';
 import { likeSearch } from '@/utils/likeSearch';
+import { InputRef } from 'antd';
 
 /**
  * 核心terminal hook
  */
-export const useTerminal = (inputRef) => {
+export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
+  /**
+   * 暴露接口
+   */
+  let terminal: Terminal.TerminalType;
+
+  /**
+   * store
+   */
+  const configStoreSnap = useSnapshot(configStore);
+
   /**
    * 命令列表
    */
@@ -25,14 +39,7 @@ export const useTerminal = (inputRef) => {
    * 输出列表
    */
   const [outputList, setOutputList] = useState<Terminal.OutputType[]>([]);
-  /**
-   * 折叠面板激活的 key
-   */
-  const [activeKeys, setActiveKeys] = useState([]);
-  /**
-   * 加载状态(背景图)
-   */
-  const [backgroundSpinning, setBackgroundSpinning] = useState(false);
+
   /**
    * 加载状态(命令)
    */
@@ -54,53 +61,6 @@ export const useTerminal = (inputRef) => {
    * 全局记录当前命令，便于写入结果
    */
   let currentNewCommand: Terminal.CommandOutputType;
-
-  /**
-   * 核心
-   * 提交命令（回车）
-   */
-  const doSubmitCommand = async () => {
-    setIsRunning(true);
-    // setHint('');
-    let inputText = inputCommand.text;
-    // 执行某条历史命令
-    if (inputText.startsWith('!')) {
-      const commandIndex = Number(inputText.substring(1));
-      const command = commandList[commandIndex - 1];
-      if (command) {
-        inputText = command.text;
-      }
-    }
-    // 执行命令(记录当前命令执行时的目录)
-    const newCommand: Terminal.CommandOutputType = {
-      text: inputText,
-      type: 'command',
-      resultList: [],
-      // dir: useSpaceStore().currentDir,
-    };
-    // 记录当前命令，便于写入结果
-    currentNewCommand = newCommand;
-    // 执行命令
-    // await onSubmitCommand?.(inputText);
-    // 添加输出（为空也要输出换行）
-    setOutputList([...outputList, newCommand]);
-
-    // 不为空字符串才算是有效命令
-    if (inputText) {
-      setCommandList([...commandList, newCommand]);
-      // 重置当前要查看的命令位置
-      setCommandHistoryPos(commandList.length);
-    }
-    // 重置
-    setInputCommand({ ...initCommand });
-    // 默认展开折叠面板
-    setActiveKeys([...activeKeys, outputList.length - 1]);
-    // 自动滚到底部
-    // setTimeout(() => {
-    //   terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-    // }, 50);
-    setIsRunning(false);
-  };
 
   /**
    * 立即输出文本
@@ -288,9 +248,85 @@ export const useTerminal = (inputRef) => {
   };
 
   /**
+   * 核心 命令执行
+   * @param inputText
+   * @returns
+   */
+  const onSubmitCommand = async (inputText: string) => {
+    if (!inputText) {
+      return;
+    }
+    await doCommandExecute(inputText, terminal);
+  };
+
+  /**
+   * 核心
+   * 提交命令（回车）
+   */
+  const doSubmitCommand = async () => {
+    setIsRunning(true);
+    // setHint('');
+    let inputText = inputCommand.text;
+    // 执行某条历史命令
+    if (inputText.startsWith('!')) {
+      const commandIndex = Number(inputText.substring(1));
+      const command = commandList[commandIndex - 1];
+      if (command) {
+        inputText = command.text;
+      }
+    }
+    // 执行命令(记录当前命令执行时的目录)
+    const newCommand: Terminal.CommandOutputType = {
+      text: inputText,
+      type: 'command',
+      resultList: [],
+      // dir: useSpaceStore().currentDir,
+    };
+    // 记录当前命令，便于写入结果
+    currentNewCommand = newCommand;
+    // 执行命令
+    await onSubmitCommand?.(inputText);
+    // 添加输出（为空也要输出换行）
+    setOutputList([...outputList, newCommand]);
+
+    // 不为空字符串才算是有效命令
+    if (inputText) {
+      setCommandList([...commandList, newCommand]);
+      // 重置当前要查看的命令位置
+      setCommandHistoryPos(commandList.length);
+    }
+    // 重置
+    setInputCommand({ ...initCommand });
+    // 默认展开折叠面板
+    setActiveKeys([...activeKeys, outputList.length - 1]);
+    // 自动滚到底部
+    // setTimeout(() => {
+    //   terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
+    // }, 50);
+    setIsRunning(false);
+  };
+
+  /**
+   * 挂载时
+   */
+  useEffect(() => {
+    // registerShortcuts(terminal);
+    const { welcomeTexts } = configStoreSnap;
+    if (welcomeTexts?.length > 0) {
+      welcomeTexts.forEach((welcomeText) => {
+        writeTextOutput(welcomeText);
+      });
+    } else {
+      writeTextOutput(first);
+      writeTextOutput(second);
+      writeTextOutput('<br/>');
+    }
+  }, []);
+
+  /**
    * 操作终端的对象
    */
-  const terminal: Terminal.TerminalType = {
+  terminal = {
     writeTextResult,
     writeTextErrorResult,
     writeTextSuccessResult,
@@ -310,20 +346,15 @@ export const useTerminal = (inputRef) => {
     setLoading: setBackgroundSpinning,
   };
 
-  /**
-   * 挂载时
-   */
-  useEffect(() => {
-    // registerShortcuts(terminal);
-    const { welcomeTexts } = configStoreSnap;
-    if (welcomeTexts?.length > 0) {
-      welcomeTexts.forEach((welcomeText) => {
-        terminal.writeTextOutput(welcomeText);
-      });
-    } else {
-      terminal.writeTextOutput(first);
-      terminal.writeTextOutput(second);
-      terminal.writeTextOutput('<br/>');
-    }
-  }, []);
+  return {
+    terminal,
+    inputCommand,
+    setInputCommand,
+    outputList,
+    setOutputList,
+    isRunning,
+    hintValue,
+    setHintValue,
+    debounceSetHint,
+  };
 };
