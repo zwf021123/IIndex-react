@@ -2,13 +2,13 @@ declare namespace Terminal {
   /**
    * 输出状态
    */
-  type OutputStatusType = "info" | "success" | "warning" | "error" | "system";
+  type OutputStatusType = 'info' | 'success' | 'warning' | 'error' | 'system';
 
   /**
    * 输出类型
    */
   interface OutputType {
-    type: "command" | "text" | "component";
+    type: 'command' | 'text' | 'component';
     text?: string;
     resultList?: OutputType[];
     component?: any;
@@ -22,7 +22,7 @@ declare namespace Terminal {
    * 命令类型输出
    */
   interface CommandOutputType extends OutputType {
-    type: "command";
+    type: 'command';
     text: string;
     resultList: OutputType[];
   }
@@ -31,7 +31,7 @@ declare namespace Terminal {
    * 文本类型输出
    */
   interface TextOutputType extends OutputType {
-    type: "text";
+    type: 'text';
     text: string;
   }
 
@@ -39,7 +39,7 @@ declare namespace Terminal {
    * 组件类型输出
    */
   interface ComponentOutputType extends OutputType {
-    type: "component";
+    type: 'component';
     component: any;
     props?: any;
   }
@@ -89,6 +89,6 @@ declare namespace Terminal {
     // 设置命令是否可折叠
     setCommandCollapsible: (collapsible: boolean) => void;
     // 设置页面loading状态
-    setLoading: (loading: boolean) => void;
+    setLoading?: (loading: boolean) => void;
   }
 }

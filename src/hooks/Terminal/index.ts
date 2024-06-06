@@ -76,7 +76,8 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
       type: 'text',
       status,
     };
-    setOutputList([...outputList, newOutput]);
+    // setOutputList([...outputList, newOutput]); 错误
+    setOutputList((prevOutputList) => [...prevOutputList, newOutput]);
   };
 
   /**
