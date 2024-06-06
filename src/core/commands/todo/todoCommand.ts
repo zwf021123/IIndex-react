@@ -1,4 +1,3 @@
-import { defineAsyncComponent } from 'vue';
 import addCommand from './subCommands/addCommand';
 type ComponentOutputType = Terminal.ComponentOutputType;
 
@@ -27,7 +26,7 @@ const todoCommand: Command.CommandType = {
     if (_.length < 1) {
       const output: ComponentOutputType = {
         type: 'component',
-        component: defineAsyncComponent(() => import('./TodoBox.vue')),
+        component: () => import('./TodoBox'),
       };
       terminal.writeResult(output);
       return;

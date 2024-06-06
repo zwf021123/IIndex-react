@@ -1,4 +1,3 @@
-import { defineAsyncComponent } from 'vue';
 import { checkSearchText } from './standard';
 type ComponentOutputType = Terminal.ComponentOutputType;
 
@@ -26,7 +25,7 @@ const varbookCommand: Command.CommandType = {
     if (!searchText) return;
     const output: ComponentOutputType = {
       type: 'component',
-      component: defineAsyncComponent(() => import('./VarbookBox.vue')),
+      component: () => import('./VarbookBox'),
       props: {
         searchText,
       },

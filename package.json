@@ -14,7 +14,7 @@
     "@ant-design/pro-components": "^2.4.4",
     "@umijs/max": "^4.2.5",
     "antd": "^5.4.0",
-    "dayjs": "^1.11.11",
+    "dayjs": "^1.11.3",
     "getopts": "^2.3.0",
     "lodash": "^4.17.21"
   },

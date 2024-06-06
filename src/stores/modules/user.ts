@@ -3,7 +3,7 @@ import { LOCAL_USER } from '@/constants/user';
 import { derive, proxy, subscribe } from '@umijs/max';
 
 export const userStore = proxy(
-  JSON.parse(localStorage.getItem('user-store') || '') || {
+  JSON.parse(localStorage.getItem('user-store')) || {
     loginUser: {
       ...LOCAL_USER,
     },

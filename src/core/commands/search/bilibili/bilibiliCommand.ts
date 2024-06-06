@@ -1,4 +1,3 @@
-import { defineAsyncComponent } from 'vue';
 type ComponentOutputType = Terminal.ComponentOutputType;
 
 const baseUrl = 'https://www.baidu.com/s';
@@ -40,7 +39,7 @@ const bilibiliCommand: Command.CommandType = {
     if (bvid) {
       const output: ComponentOutputType = {
         type: 'component',
-        component: defineAsyncComponent(() => import('./BilibiliBox.vue')),
+        component: () => import('./BilibiliBox'),
         props: {
           bvid,
         },

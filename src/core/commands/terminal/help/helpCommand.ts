@@ -1,4 +1,3 @@
-import { defineAsyncComponent } from 'vue';
 import { commandMap } from '../../../commandRegister';
 type ComponentOutputType = Terminal.ComponentOutputType;
 
@@ -24,7 +23,7 @@ export const helpCommand: Command.CommandType = {
     if (_.length < 1) {
       const output: ComponentOutputType = {
         type: 'component',
-        component: defineAsyncComponent(() => import('./HelpBox.vue')),
+        component: () => import('./HelpBox'),
       };
       terminal.writeResult(output);
       return;
@@ -47,7 +46,7 @@ export const helpCommand: Command.CommandType = {
     }
     const output: ComponentOutputType = {
       type: 'component',
-      component: defineAsyncComponent(() => import('./CommandHelpBox.vue')),
+      component: () => import('./CommandHelpBox'),
       props: {
         command,
         parentCommand,

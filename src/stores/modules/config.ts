@@ -18,7 +18,7 @@ const initConfig: configType = {
 };
 
 export const configStore = proxy<configType>(
-  JSON.parse(localStorage.getItem('config-store') || '') || {
+  JSON.parse(localStorage.getItem('config-store')) || {
     ...initConfig,
   },
 );

@@ -12,7 +12,7 @@ const moyuCommand: Command.CommandType = {
   action(options, terminal) {
     const output: ComponentOutputType = {
       type: 'component',
-      component: () => import('./MoYuBox.vue'),
+      component: () => import('./MoYuBox'),
       props: {},
     };
     terminal.writeResult(output);

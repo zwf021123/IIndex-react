@@ -24,7 +24,7 @@ const timingCommand: Command.CommandType = {
     }
     const output: ComponentOutputType = {
       type: 'component',
-      component: () => import('./TimingBox.vue'),
+      component: () => import('./TimingBox'),
       props: {
         seconds,
       },

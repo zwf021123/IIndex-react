@@ -1,4 +1,3 @@
-import { defineAsyncComponent } from 'vue';
 type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
@@ -13,7 +12,7 @@ const ddosCommand: Command.CommandType = {
   action(options, terminal) {
     const output: ComponentOutputType = {
       type: 'component',
-      component: defineAsyncComponent(() => import('./DdosBox.vue')),
+      component: () => import('./DdosBox'),
       props: {},
     };
     terminal.writeResult(output);

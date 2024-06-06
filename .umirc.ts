@@ -6,7 +6,6 @@ export default defineConfig({
     configProvider: {},
     style: 'less',
     // 配置antd时间相关组件使用 MomentJS
-    momentPicker: true,
   },
   valtio: {},
   routes: [

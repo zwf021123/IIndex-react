@@ -1,7 +1,7 @@
 import { proxy, subscribe } from '@umijs/max';
 
 export const todoStore = proxy(
-  JSON.parse(localStorage.getItem('todo-store') || '') || {
+  JSON.parse(localStorage.getItem('todo-store')) || {
     taskList: [
       {
         name: '写下你要做的事',

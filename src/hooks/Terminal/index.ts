@@ -343,7 +343,6 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
     listCommandHistory,
     toggleAllCollapse,
     setCommandCollapsible,
-    setLoading: setBackgroundSpinning,
   };
 
   return {

@@ -1,5 +1,5 @@
 import { listHotMusics } from '@/api/music';
-import { defineAsyncComponent } from 'vue';
+
 type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
@@ -29,7 +29,7 @@ const hotCommand: Command.CommandType = {
       }
       const output: ComponentOutputType = {
         type: 'component',
-        component: defineAsyncComponent(() => import('./HotBox.vue')),
+        component: () => import('./HotBox'),
         props: {
           songList,
         },

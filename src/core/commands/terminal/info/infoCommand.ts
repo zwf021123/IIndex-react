@@ -1,4 +1,3 @@
-import { defineAsyncComponent } from 'vue';
 type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
@@ -13,7 +12,7 @@ export const infoCommand: Command.CommandType = {
   action(options, terminal): void {
     const output: ComponentOutputType = {
       type: 'component',
-      component: defineAsyncComponent(() => import('./InfoBox.vue')),
+      component: () => import('./InfoBox.tsx'),
     };
     terminal.writeResult(output);
   },

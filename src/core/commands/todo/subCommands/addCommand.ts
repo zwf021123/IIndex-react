@@ -1,6 +1,6 @@
 import { TodoStore } from '@/stores';
 
-import TaskType = Todo.TaskType;
+type TaskType = Todo.TaskType;
 
 /**
  * 添加任务命令
