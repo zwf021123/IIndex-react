@@ -41,6 +41,11 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
   const [outputList, setOutputList] = useState<Terminal.OutputType[]>([]);
 
   /**
+   * 折叠面板激活的 key
+   */
+  const [activeKeys, setActiveKeys] = useState<string[]>([]);
+
+  /**
    * 加载状态(命令)
    */
   const [isRunning, setIsRunning] = useState(false);
@@ -266,7 +271,7 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
    */
   const doSubmitCommand = async () => {
     setIsRunning(true);
-    // setHint('');
+    setHintValue('');
     let inputText = inputCommand.text;
     // 执行某条历史命令
     if (inputText.startsWith('!')) {
@@ -289,7 +294,6 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
     await onSubmitCommand?.(inputText);
     // 添加输出（为空也要输出换行）
     setOutputList([...outputList, newCommand]);
-
     // 不为空字符串才算是有效命令
     if (inputText) {
       setCommandList([...commandList, newCommand]);
@@ -299,7 +303,9 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
     // 重置
     setInputCommand({ ...initCommand });
     // 默认展开折叠面板
-    setActiveKeys([...activeKeys, outputList.length - 1]);
+    console.log('outputlist', outputList);
+
+    setActiveKeys([...activeKeys, String(outputList.length - 1)]);
     // 自动滚到底部
     // setTimeout(() => {
     //   terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
@@ -356,5 +362,7 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
     hintValue,
     setHintValue,
     debounceSetHint,
+    activeKeys,
+    setActiveKeys,
   };
 };

@@ -30,10 +30,7 @@ const Terminal: React.FC<TerminalProps> = ({
   /**
    * state
    */
-  /**
-   * 折叠面板激活的 key
-   */
-  const [activeKeys, setActiveKeys] = useState([]);
+
   /**
    * 加载状态(背景图)
    */
@@ -44,8 +41,15 @@ const Terminal: React.FC<TerminalProps> = ({
    */
   const inputRef = useRef<InputRef>(null);
 
-  const { terminal, isRunning, inputCommand, setInputCommand, outputList } =
-    useTerminal(inputRef);
+  const {
+    terminal,
+    isRunning,
+    inputCommand,
+    setInputCommand,
+    outputList,
+    activeKeys,
+    setActiveKeys,
+  } = useTerminal(inputRef);
   /**
    *
    */
@@ -62,7 +66,9 @@ const Terminal: React.FC<TerminalProps> = ({
 
   const prompt = `user@${user.username}:~#`;
 
-  const handleCoppapseChange = (key) => {
+  const handleCoppapseChange = (key: string[]) => {
+    console.log('key', key);
+
     setActiveKeys(key);
   };
 

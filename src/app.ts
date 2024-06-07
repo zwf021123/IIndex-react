@@ -1,4 +1,5 @@
 // 运行时配置
+import '@/styles/global.less';
 import { RuntimeReactQueryType } from 'umi';
 
 export const reactQuery: RuntimeReactQueryType = {

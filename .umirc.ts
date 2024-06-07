@@ -5,7 +5,10 @@ export default defineConfig({
     // configProvider
     configProvider: {},
     style: 'less',
-    // 配置antd时间相关组件使用 MomentJS
+    styleProvider: {
+      hashPriority: 'high',
+      legacyTransformer: true,
+    },
   },
   valtio: {},
   routes: [
