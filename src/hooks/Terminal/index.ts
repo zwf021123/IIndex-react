@@ -6,13 +6,17 @@ import { first, second } from '@/constants/welcome';
 import { doCommandExecute } from '@/core/commandExecutor';
 import { useHint, useHistory } from '@/hooks';
 import { configStore } from '@/stores';
+import { registerShortcuts } from '@/utils/keyboardUtils';
 import { likeSearch } from '@/utils/likeSearch';
 import { InputRef } from 'antd';
 
 /**
  * 核心terminal hook
  */
-export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
+export const useTerminal = (
+  inputRef: React.RefObject<InputRef>,
+  terminalRef: React.RefObject<HTMLDivElement>,
+) => {
   /**
    * 暴露接口
    */
@@ -22,7 +26,6 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
    * store
    */
   const configStoreSnap = useSnapshot(configStore);
-
   /**
    * 命令列表
    */
@@ -43,7 +46,7 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
   /**
    * 折叠面板激活的 key
    */
-  const [activeKeys, setActiveKeys] = useState<string[]>([]);
+  const [activeKeys, setActiveKeys] = useState<(string | number)[]>([]);
 
   /**
    * 加载状态(命令)
@@ -124,6 +127,9 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
    */
   const writeResult = (output: Terminal.OutputType) => {
     // 组件无需响应式追踪?????
+    console.log('output', output, currentNewCommand);
+
+    return;
     currentNewCommand.resultList.push(
       output.type === 'component' ? output : output,
     );
@@ -302,22 +308,46 @@ export const useTerminal = (inputRef: React.RefObject<InputRef>) => {
     }
     // 重置
     setInputCommand({ ...initCommand });
-    // 默认展开折叠面板
-    console.log('outputlist', outputList);
-
-    setActiveKeys([...activeKeys, String(outputList.length - 1)]);
-    // 自动滚到底部
-    // setTimeout(() => {
-    //   terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
-    // }, 50);
     setIsRunning(false);
   };
+
+  /**
+   * 新增output时
+   */
+  useEffect(() => {
+    // 默认展开折叠面板
+    if (outputList.length > 0) {
+      // 因为初次挂载后，outputList的长度变为3，所以activeKeys的长度默认多一个2
+      console.log('outputList', outputList);
+
+      setActiveKeys([...activeKeys, outputList.length - 1]);
+      // 自动滚到底部
+      // if (terminalRef.current) {
+      //   console.log(
+      //     '延迟50ms后滚动到底部：',
+      //     terminalRef.current.scrollTop,
+      //     terminalRef.current.scrollHeight,
+      //   );
+      // }
+      // setTimeout(() => {
+      //   if (terminalRef.current) {
+      //     terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+      //     // console.log(1);
+      //     // terminalRef.current.scrollIntoView({
+      //     //   block: 'end',
+      //     //   inline: 'nearest',
+      //     //   behavior: 'smooth',
+      //     // });
+      //   }
+      // }, 50);
+    }
+  }, [outputList]);
 
   /**
    * 挂载时
    */
   useEffect(() => {
-    // registerShortcuts(terminal);
+    registerShortcuts(terminal);
     const { welcomeTexts } = configStoreSnap;
     if (welcomeTexts?.length > 0) {
       welcomeTexts.forEach((welcomeText) => {

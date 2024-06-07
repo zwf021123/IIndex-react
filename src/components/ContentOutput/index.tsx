@@ -1,7 +1,7 @@
 import { colorMap } from '@/constants/color';
-import smartText from '@/utils/output';
+import { smartText } from '@/utils/output';
 import { Spin, Tag } from 'antd';
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense } from 'react';
 import './index.less';
 
 interface OutputProps {
@@ -10,7 +10,7 @@ interface OutputProps {
 
 const ContentOutput: React.FC<OutputProps> = ({ output }: OutputProps) => {
   const outputTagColor = colorMap[output?.status || 'default'];
-  const Component = lazy(output.component);
+  const Component = output.component;
 
   return (
     <div className="content-output">

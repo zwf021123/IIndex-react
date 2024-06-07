@@ -1,3 +1,4 @@
+import { lazy } from 'react';
 import { commandMap } from '../../../commandRegister';
 type ComponentOutputType = Terminal.ComponentOutputType;
 
@@ -46,7 +47,7 @@ export const helpCommand: Command.CommandType = {
     }
     const output: ComponentOutputType = {
       type: 'component',
-      component: () => import('./CommandHelpBox'),
+      component: lazy(() => import('./CommandHelpBox')),
       props: {
         command,
         parentCommand,

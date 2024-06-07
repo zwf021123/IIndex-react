@@ -1,8 +1,8 @@
+import { commandMap } from '@/core/commandRegister';
 import { configStore } from '@/stores';
+import { getUsageStr } from '@/utils/output';
 import _, { trim } from 'lodash';
 import { useState } from 'react';
-import { commandMap } from '../../core/commandRegister';
-import { getUsageStr } from '../../core/commands/terminal/help/helpUtils';
 
 /**
  * 模糊查询

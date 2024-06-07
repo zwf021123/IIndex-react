@@ -1,4 +1,4 @@
-import { getOptionKeyList, getUsageStr } from './helpUtils';
+import { getOptionKeyList, getUsageStr } from '@/utils/output';
 
 interface HelpBoxProps {
   command: Command.CommandType;

@@ -41,6 +41,11 @@ const Terminal: React.FC<TerminalProps> = ({
    */
   const inputRef = useRef<InputRef>(null);
 
+  /**
+   * terminal ref
+   */
+  const terminalRef = useRef(null);
+
   const {
     terminal,
     isRunning,
@@ -49,7 +54,7 @@ const Terminal: React.FC<TerminalProps> = ({
     outputList,
     activeKeys,
     setActiveKeys,
-  } = useTerminal(inputRef);
+  } = useTerminal(inputRef, terminalRef);
   /**
    *
    */
@@ -66,10 +71,9 @@ const Terminal: React.FC<TerminalProps> = ({
 
   const prompt = `user@${user.username}:~#`;
 
-  const handleCoppapseChange = (key: string[]) => {
+  const handleCoppapseChange = (key: string[] | string) => {
     console.log('key', key);
-
-    setActiveKeys(key);
+    setActiveKeys(key as string[]);
   };
 
   /**
@@ -93,7 +97,7 @@ const Terminal: React.FC<TerminalProps> = ({
         size="large"
         spinning={backgroundSpinning}
       >
-        <div className="terminal" style={mainStyle}>
+        <div ref={terminalRef} className="terminal" style={mainStyle}>
           <Collapse
             activeKey={activeKeys}
             onChange={handleCoppapseChange}
@@ -104,6 +108,7 @@ const Terminal: React.FC<TerminalProps> = ({
               output.collapsible ? (
                 // 可折叠内容
                 <Panel
+                  forceRender={true}
                   header={
                     <>
                       <span style={{ userSelect: 'none', marginRight: '10px' }}>

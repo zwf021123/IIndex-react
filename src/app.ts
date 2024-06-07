@@ -5,6 +5,7 @@ import { RuntimeReactQueryType } from 'umi';
 export const reactQuery: RuntimeReactQueryType = {
   devtool: {
     initialIsOpen: false,
+    position: 'bottom-right',
   },
   queryClient: {
     defaultOptions: {
