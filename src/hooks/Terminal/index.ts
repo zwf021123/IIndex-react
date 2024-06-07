@@ -287,6 +287,7 @@ export const useTerminal = (
         inputText = command.text;
       }
     }
+
     // 执行命令(记录当前命令执行时的目录)
     const newCommand: Terminal.CommandOutputType = {
       text: inputText,
