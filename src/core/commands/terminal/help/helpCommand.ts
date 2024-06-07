@@ -24,7 +24,7 @@ export const helpCommand: Command.CommandType = {
     if (_.length < 1) {
       const output: ComponentOutputType = {
         type: 'component',
-        component: () => import('./HelpBox'),
+        component: lazy(() => import('./HelpBox')),
       };
       terminal.writeResult(output);
       return;

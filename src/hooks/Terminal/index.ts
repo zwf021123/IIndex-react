@@ -61,7 +61,7 @@ export const useTerminal = (
     showPrevCommand,
     showNextCommand,
     listCommandHistory,
-  } = useHistory(commandList, inputCommand);
+  } = useHistory(commandList, inputCommand, setInputCommand);
 
   const { hintValue, command, setHintValue, debounceSetHint } = useHint();
 
@@ -126,13 +126,13 @@ export const useTerminal = (
    * @param output
    */
   const writeResult = (output: Terminal.OutputType) => {
-    // 组件无需响应式追踪?????
-    console.log('output', output, currentNewCommand);
-
-    return;
-    currentNewCommand.resultList.push(
-      output.type === 'component' ? output : output,
-    );
+    // console.log('outputlist', output, outputList);
+    // 此时的outputList是旧的，即还未触发渲染，因此直接更新还未进入outputList的currentNewCommand
+    if (output.type === 'component') {
+      console.log('output', output);
+      currentNewCommand.resultList.push(output);
+    }
+    // console.log('currentNewCommand', currentNewCommand);
   };
 
   /**
@@ -305,42 +305,36 @@ export const useTerminal = (
     if (inputText) {
       setCommandList([...commandList, newCommand]);
       // 重置当前要查看的命令位置
-      setCommandHistoryPos(commandList.length);
+      // setCommandHistoryPos(commandList.length);
     }
     // 重置
     setInputCommand({ ...initCommand });
+
     setIsRunning(false);
   };
 
   /**
-   * 新增output时
+   * 新增output时(为了拿到最新数据)
    */
   useEffect(() => {
     // 默认展开折叠面板
     if (outputList.length > 0) {
       // 因为初次挂载后，outputList的长度变为3，所以activeKeys的长度默认多一个2
-      console.log('outputList', outputList);
 
       setActiveKeys([...activeKeys, outputList.length - 1]);
       // 自动滚到底部
+      setTimeout(() => {
+        if (terminalRef.current) {
+          terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+        }
+      }, 500);
       // if (terminalRef.current) {
       //   console.log(
-      //     '延迟50ms后滚动到底部：',
+      //     '延迟200ms后滚动到底部：',
       //     terminalRef.current.scrollTop,
       //     terminalRef.current.scrollHeight,
       //   );
       // }
-      // setTimeout(() => {
-      //   if (terminalRef.current) {
-      //     terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
-      //     // console.log(1);
-      //     // terminalRef.current.scrollIntoView({
-      //     //   block: 'end',
-      //     //   inline: 'nearest',
-      //     //   behavior: 'smooth',
-      //     // });
-      //   }
-      // }, 50);
     }
   }, [outputList]);
 

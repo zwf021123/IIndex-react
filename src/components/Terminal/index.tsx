@@ -95,78 +95,76 @@ const Terminal: React.FC<TerminalProps> = ({
         className="loading"
         tip="Loading..."
         size="large"
+        fullscreen
         spinning={backgroundSpinning}
-      >
-        <div ref={terminalRef} className="terminal" style={mainStyle}>
-          <Collapse
-            activeKey={activeKeys}
-            onChange={handleCoppapseChange}
-            ghost
-            expandIconPosition="end"
-          >
-            {outputList.map((output, index) =>
-              output.collapsible ? (
-                // 可折叠内容
-                <Panel
-                  forceRender={true}
-                  header={
-                    <>
-                      <span style={{ userSelect: 'none', marginRight: '10px' }}>
-                        {prompt}
-                      </span>
-                      <span>{output.text}</span>
-                    </>
-                  }
-                  key={index}
-                  className="terminal-row"
-                >
-                  {output?.resultList?.map((result, idx) => (
-                    <div key={`${index}-${idx}`} className="terminal-row">
-                      <ContentOutput output={result} />
-                    </div>
-                  ))}
-                </Panel>
-              ) : output.type === 'command' ? (
-                <Fragment key={index}>
-                  <div className="terminal-row">
+      />
+      <div ref={terminalRef} className="terminal" style={mainStyle}>
+        <Collapse
+          activeKey={activeKeys}
+          onChange={handleCoppapseChange}
+          ghost
+          expandIconPosition="end"
+        >
+          {outputList.map((output, index) =>
+            output.collapsible ? (
+              // 可折叠内容
+              <Panel
+                forceRender={true}
+                header={
+                  <>
                     <span style={{ userSelect: 'none', marginRight: '10px' }}>
                       {prompt}
                     </span>
                     <span>{output.text}</span>
+                  </>
+                }
+                key={index}
+                className="terminal-row"
+              >
+                {output?.resultList?.map((result, idx) => (
+                  <div key={`${index}-${idx}`} className="terminal-row">
+                    <ContentOutput output={result} />
                   </div>
-                  {output?.resultList?.map((result, idx) => (
-                    <div key={`${index}-${idx}`} className="terminal-row">
-                      <ContentOutput output={result} />
-                    </div>
-                  ))}
-                </Fragment>
-              ) : (
-                <div className="terminal-row" key={index}>
-                  <ContentOutput output={output} />
+                ))}
+              </Panel>
+            ) : output.type === 'command' ? (
+              <Fragment key={index}>
+                <div className="terminal-row">
+                  <span style={{ userSelect: 'none', marginRight: '10px' }}>
+                    {prompt}
+                  </span>
+                  <span>{output.text}</span>
                 </div>
-              ),
-            )}
-          </Collapse>
-          <div className="terminal-row">
-            <Input
-              ref={inputRef}
-              className="command-input"
-              disabled={isRunning}
-              placeholder={inputCommand.placeholder}
-              variant="borderless"
-              autoFocus
-              value={inputCommand.text}
-              addonBefore={
-                <span className="command-input-prompt">{prompt}</span>
-              }
-              onChange={(e) => setInputCommand({ text: e.target.value })}
-              onPressEnter={terminal.doSubmitCommand}
-            ></Input>
-          </div>
-          <div>hint</div>
-          <div style={{ marginBottom: 16 }} />
+                {output?.resultList?.map((result, idx) => (
+                  <div key={`${index}-${idx}`} className="terminal-row">
+                    <ContentOutput output={result} />
+                  </div>
+                ))}
+              </Fragment>
+            ) : (
+              <div className="terminal-row" key={index}>
+                <ContentOutput output={output} />
+              </div>
+            ),
+          )}
+        </Collapse>
+        <div className="terminal-row">
+          <Input
+            ref={inputRef}
+            className="command-input"
+            disabled={isRunning}
+            placeholder={inputCommand.placeholder}
+            variant="borderless"
+            autoFocus
+            value={inputCommand.text}
+            addonBefore={<span className="command-input-prompt">{prompt}</span>}
+            onChange={(e) => setInputCommand({ text: e.target.value })}
+            onPressEnter={terminal.doSubmitCommand}
+          ></Input>
         </div>
-      </Spin>
+        <div>hint</div>
+        <div style={{ marginBottom: 16 }} />
+      </div>
     </div>
   );
 };
