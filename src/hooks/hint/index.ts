@@ -1,31 +1,29 @@
 import { commandMap } from '@/core/commandRegister';
 import { configStore } from '@/stores';
+import { likeSearch } from '@/utils/likeSearch';
 import { getUsageStr } from '@/utils/output';
 import _, { trim } from 'lodash';
-import { useState } from 'react';
-
-/**
- * 模糊查询
- */
-const likeSearch = (keyword: string, commandMapParam = commandMap) => {
-  // 大小写无关
-  let func = keyword.toLowerCase();
-  // 前缀匹配
-  const likeKey = Object.keys(commandMapParam).filter((key) =>
-    key.startsWith(func),
-  )[0];
-  return likeKey;
-};
+import { useRef, useState } from 'react';
 
 /**
  * 命令提示功能
  * @author awf021123
  */
 export const useHint = () => {
+  /**
+   * store
+   */
+  const { showHint } = configStore;
+
   const [hintValue, setHintValue] = useState('');
   // 记录匹配到的命令（便于后续提示操作）
-  let command = null;
-  const { showHint } = configStore;
+  // const inputCommandSnap = useRef<Terminal.CommandInputType | null>(null);
+  const command = useRef<Command.CommandType | null>(null);
+
+  // useEffect(() => {
+  //   // 同步inputCommand
+  //   inputCommandSnap.current = inputCommand;
+  // }, [inputCommand]);
 
   const setHint = (inputText: string) => {
     // 未开启提示
@@ -39,7 +37,7 @@ export const useHint = () => {
     const args = trim(inputText).split(/\s+/);
 
     const likeKey = likeSearch(args[0]);
-    command = commandMap[likeKey];
+    command.current = commandMap[likeKey];
     // 未匹配成功
     if (!command) {
       setHintValue('');
@@ -47,18 +45,21 @@ export const useHint = () => {
     }
     // 子命令提示
     if (
-      command.subCommands &&
-      Object.keys(command.subCommands).length > 0 &&
+      command.current.subCommands &&
+      Object.keys(command.current.subCommands).length > 0 &&
       args.length > 1
     ) {
       // 模糊查询子命令func(这里只能满足存在父子命令的情况)
-      const likeKey = likeSearch(args[1], command.subCommands);
-      const usageStr = getUsageStr(command.subCommands[likeKey], command);
+      const likeKey = likeSearch(args[1], command.current.subCommands);
+      const usageStr = getUsageStr(
+        command.current.subCommands[likeKey],
+        command.current,
+      );
       setHintValue(usageStr);
       // 获取提示后再更新command
-      command = command.subCommands[likeKey];
+      command.current = command.current.subCommands[likeKey];
     } else {
-      const usageStr = getUsageStr(command);
+      const usageStr = getUsageStr(command.current);
       setHintValue(usageStr);
     }
   };
@@ -73,7 +74,7 @@ export const useHint = () => {
   return {
     hintValue,
     setHintValue,
-    command,
+    matchedCommand: command,
     debounceSetHint,
   };
 };

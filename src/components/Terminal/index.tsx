@@ -8,7 +8,7 @@ const { Panel } = Collapse;
 
 import ContentOutput from '@/components/ContentOutput';
 import { LOCAL_USER } from '@/constants/user';
-import { useTerminal } from '@/hooks';
+import { useHint, useTerminal } from '@/hooks';
 import { configStore } from '@/stores';
 
 type TerminalProps = {
@@ -46,6 +46,9 @@ const Terminal: React.FC<TerminalProps> = ({
    */
   const terminalRef = useRef(null);
 
+  /**
+   * hooks
+   */
   const {
     terminal,
     isRunning,
@@ -55,9 +58,8 @@ const Terminal: React.FC<TerminalProps> = ({
     activeKeys,
     setActiveKeys,
   } = useTerminal(inputRef, terminalRef);
-  /**
-   *
-   */
+
+  const { hintValue, debounceSetHint } = useHint();
 
   const mainStyle: React.CSSProperties = fullScreen
     ? { position: 'fixed', top: 0, bottom: 0, left: 0, right: 0 }
@@ -158,11 +160,18 @@ const Terminal: React.FC<TerminalProps> = ({
             autoFocus
             value={inputCommand.text}
             addonBefore={<span className="command-input-prompt">{prompt}</span>}
-            onChange={(e) => setInputCommand({ text: e.target.value })}
+            onChange={(e) => {
+              setInputCommand({ text: e.target.value });
+              debounceSetHint(inputCommand.text);
+            }}
             onPressEnter={terminal.doSubmitCommand}
           ></Input>
         </div>
-        <div>hint</div>
+        {hintValue && !isRunning && (
+          <div className="terminal-row" style={{ color: '#bbb' }}>
+            hint：{hintValue}
+          </div>
+        )}
         <div style={{ marginBottom: 16 }} />
       </div>
     </div>

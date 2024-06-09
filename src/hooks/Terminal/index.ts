@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { first, second } from '@/constants/welcome';
 import { doCommandExecute } from '@/core/commandExecutor';
 import { useHint, useHistory } from '@/hooks';
-import { configStore } from '@/stores';
+import { configStore, spaceActions } from '@/stores';
 import { registerShortcuts } from '@/utils/keyboardUtils';
 import { likeSearch } from '@/utils/likeSearch';
 import { InputRef } from 'antd';
@@ -26,6 +26,8 @@ export const useTerminal = (
    * store
    */
   const configStoreSnap = useSnapshot(configStore);
+  const { autoCompletePath } = spaceActions;
+
   /**
    * 命令列表
    */
@@ -63,7 +65,8 @@ export const useTerminal = (
     listCommandHistory,
   } = useHistory(commandList, inputCommand, setInputCommand);
 
-  const { hintValue, command, setHintValue, debounceSetHint } = useHint();
+  const { hintValue, matchedCommand, setHintValue, debounceSetHint } =
+    useHint();
 
   /**
    * 全局记录当前命令，便于写入结果
@@ -194,11 +197,24 @@ export const useTerminal = (
   };
 
   /**
-   * 设置输入框的值
+   * 核心 命令执行
+   * @param inputText
+   * @returns
+   */
+  const onSubmitCommand = async (inputText: string) => {
+    if (!inputText) {
+      return;
+    }
+    await doCommandExecute(inputText, terminal);
+  };
+
+  /**
+   * 根据hintValue设置输入框的值
    */
   const setTabCompletion = () => {
+    console.log('setTabCompletion传入参数', JSON.stringify(hintValue));
     if (hintValue) {
-      const wordArr = inputCommand.text.split(/\s+/);
+      const wordArr = inputCommand!.text.split(/\s+/);
       const hintArr = hintValue.split(/\s+/);
       const wordNum = wordArr.length;
       const currentHintWord = hintArr[wordNum - 1];
@@ -209,7 +225,6 @@ export const useTerminal = (
        * 判断当前输入的位置信息为路径还是命令（判断当前的hint值是否包含“目录”或“路径”）
        * 还是得新建一个方法进行补全，不然使用getFullPath补全会一直补全为绝对路径)
        */
-      //  如果是命令则需要进行命令补全
       if (
         currentHintWord.indexOf('目录') !== -1 ||
         currentHintWord.indexOf('路径') !== -1
@@ -218,7 +233,7 @@ export const useTerminal = (
         const text =
           [
             ...wordArr.slice(0, wordNum - 1),
-            spaceStore.autoCompletePath(currentWord),
+            autoCompletePath(currentWord),
           ].join(' ') + ' ';
         setInputCommand({ ...inputCommand, text });
       } else if (isOption) {
@@ -227,14 +242,18 @@ export const useTerminal = (
          * 如果这里能够拿到当前准备执行的命令实例，同时利用wordArr[wordNum - 2]判断是否是一个option
          * 如果是则可以通过实例拿到所有当前option的可选项，然后进行option的补全
          */
+        // 未匹配到命令
+        if (!matchedCommand.current) return;
         // 获取当前选项的所有可选值
         let options = null;
-        for (let i = 0; i < command.options.length; i++) {
+        for (let i = 0; i < matchedCommand.current.options.length; i++) {
           if (
-            command.options[i].key === toMatch ||
-            command.options[i].alias?.some((alias: string) => alias === toMatch)
+            matchedCommand.current.options[i].key === toMatch ||
+            matchedCommand.current.options[i].alias?.some(
+              (alias: string) => alias === toMatch,
+            )
           ) {
-            options = command.options[i].alternative;
+            options = matchedCommand.current.options[i].alternative;
             break;
           }
         }
@@ -257,18 +276,6 @@ export const useTerminal = (
         setInputCommand({ ...inputCommand, text });
       }
     }
-  };
-
-  /**
-   * 核心 命令执行
-   * @param inputText
-   * @returns
-   */
-  const onSubmitCommand = async (inputText: string) => {
-    if (!inputText) {
-      return;
-    }
-    await doCommandExecute(inputText, terminal);
   };
 
   /**
@@ -305,7 +312,7 @@ export const useTerminal = (
     if (inputText) {
       setCommandList([...commandList, newCommand]);
       // 重置当前要查看的命令位置
-      // setCommandHistoryPos(commandList.length);
+      setCommandHistoryPos(commandList.length);
     }
     // 重置
     setInputCommand({ ...initCommand });

@@ -50,5 +50,7 @@ declare namespace Command {
     type: 'string' | 'boolean';
     defaultValue?: string | boolean; // 默认值，标识作用
     required?: boolean; // 是否必填
+    alternative?: object; // 可选值
+    needHidden?: boolean; // 是否需要隐藏输入
   }
 }
