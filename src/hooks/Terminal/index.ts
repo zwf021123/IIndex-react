@@ -1,6 +1,6 @@
 import { initCommand } from '@/constants';
 import { useSnapshot } from '@umijs/max';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { first, second } from '@/constants/welcome';
 import { doCommandExecute } from '@/core/commandExecutor';
@@ -55,6 +55,10 @@ export const useTerminal = (
    */
   const [isRunning, setIsRunning] = useState(false);
 
+  /**
+   * Refs
+   */
+  const hintValueRef = useRef<string>('');
   /**
    * Hooks
    */
@@ -197,21 +201,10 @@ export const useTerminal = (
   };
 
   /**
-   * 核心 命令执行
-   * @param inputText
-   * @returns
-   */
-  const onSubmitCommand = async (inputText: string) => {
-    if (!inputText) {
-      return;
-    }
-    await doCommandExecute(inputText, terminal);
-  };
-
-  /**
    * 根据hintValue设置输入框的值
    */
   const setTabCompletion = () => {
+    let hintValue = hintValueRef.current;
     console.log('setTabCompletion传入参数', JSON.stringify(hintValue));
     if (hintValue) {
       const wordArr = inputCommand!.text.split(/\s+/);
@@ -276,6 +269,18 @@ export const useTerminal = (
         setInputCommand({ ...inputCommand, text });
       }
     }
+  };
+
+  /**
+   * 核心 命令执行
+   * @param inputText
+   * @returns
+   */
+  const onSubmitCommand = async (inputText: string) => {
+    if (!inputText) {
+      return;
+    }
+    await doCommandExecute(inputText, terminal);
   };
 
   /**
@@ -344,6 +349,13 @@ export const useTerminal = (
       // }
     }
   }, [outputList]);
+
+  /**
+   * 同步hintValue
+   */
+  useEffect(() => {
+    hintValueRef.current = hintValue;
+  }, [hintValue]);
 
   /**
    * 挂载时

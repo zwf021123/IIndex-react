@@ -39,10 +39,11 @@ export const useHint = () => {
     const likeKey = likeSearch(args[0]);
     command.current = commandMap[likeKey];
     // 未匹配成功
-    if (!command) {
+    if (!command.current) {
       setHintValue('');
       return;
     }
+    // console.log('setHint command.current', command.current, inputText);
     // 子命令提示
     if (
       command.current.subCommands &&

@@ -8,7 +8,7 @@ const { Panel } = Collapse;
 
 import ContentOutput from '@/components/ContentOutput';
 import { LOCAL_USER } from '@/constants/user';
-import { useHint, useTerminal } from '@/hooks';
+import { useTerminal } from '@/hooks';
 import { configStore } from '@/stores';
 
 type TerminalProps = {
@@ -52,6 +52,8 @@ const Terminal: React.FC<TerminalProps> = ({
   const {
     terminal,
     isRunning,
+    hintValue,
+    debounceSetHint,
     inputCommand,
     setInputCommand,
     outputList,
@@ -59,7 +61,7 @@ const Terminal: React.FC<TerminalProps> = ({
     setActiveKeys,
   } = useTerminal(inputRef, terminalRef);
 
-  const { hintValue, debounceSetHint } = useHint();
+  // const { hintValue, debounceSetHint } = useHint();
 
   const mainStyle: React.CSSProperties = fullScreen
     ? { position: 'fixed', top: 0, bottom: 0, left: 0, right: 0 }
@@ -162,7 +164,7 @@ const Terminal: React.FC<TerminalProps> = ({
             addonBefore={<span className="command-input-prompt">{prompt}</span>}
             onChange={(e) => {
               setInputCommand({ text: e.target.value });
-              debounceSetHint(inputCommand.text);
+              debounceSetHint(e.target.value);
             }}
             onPressEnter={terminal.doSubmitCommand}
           ></Input>
