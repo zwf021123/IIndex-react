@@ -27,7 +27,7 @@ export const hintCommand: Command.CommandType = {
     }
     const res = setOrToggleShowHint(newHint);
     terminal.writeTextSuccessResult(
-      `输入提示已${res ? '开启' : '关闭'}，刷新页面后生效`,
+      `输入提示已${res ? '开启' : '关闭'}，如未生效请刷新页面。`,
     );
   },
 };

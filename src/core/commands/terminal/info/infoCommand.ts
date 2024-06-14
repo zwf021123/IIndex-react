@@ -1,3 +1,5 @@
+import { lazy } from 'react';
+
 type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
@@ -12,7 +14,7 @@ export const infoCommand: Command.CommandType = {
   action(options, terminal): void {
     const output: ComponentOutputType = {
       type: 'component',
-      component: () => import('./InfoBox.tsx'),
+      component: lazy(() => import('./InfoBox')),
     };
     terminal.writeResult(output);
   },

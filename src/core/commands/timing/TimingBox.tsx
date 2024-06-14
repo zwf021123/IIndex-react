@@ -1,37 +1,50 @@
 import { Button } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import './index.less';
 
 const TimingBox: React.FC<{ seconds: string }> = ({ seconds }) => {
   // 剩余时间
   const [leftTime, setLeftTime] = useState<number>(Number(seconds));
+  const leftTimeRef = useRef<number>(Number(seconds));
   // 运行中
   const [start, setStart] = useState<boolean>(true);
   // 定时器
-  let interval: number;
+  let interval = useRef<number>();
   /**
    * 暂停 / 运行
    */
   const toggleStart = () => {
     setStart(!start);
   };
+
+  /**
+   * 避免闭包陷阱
+   */
   useEffect(() => {
-    if (!leftTime) {
+    leftTimeRef.current = leftTime;
+  }, [leftTime]);
+
+  /**
+   * 开始计时
+   */
+  useEffect(() => {
+    if (!leftTimeRef.current) {
       return;
     }
-    interval = window.setInterval(() => {
+    interval.current = window.setInterval(() => {
       if (start) {
-        setLeftTime(leftTime - 1);
+        setLeftTime((leftTime) => leftTime - 1);
       }
-      if (leftTime <= 0) {
+      if (leftTimeRef.current <= 1) {
         alert(`${seconds} 秒倒计时结束`);
-        if (interval) {
-          clearInterval(interval);
+        if (interval.current) {
+          clearInterval(interval.current);
         }
       }
     }, 1000);
     return () => {
-      if (interval) {
-        clearInterval(interval);
+      if (interval.current) {
+        clearInterval(interval.current);
       }
     };
   }, []);

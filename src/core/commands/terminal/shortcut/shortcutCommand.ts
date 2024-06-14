@@ -1,3 +1,5 @@
+import { lazy } from 'react';
+
 type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
@@ -15,7 +17,7 @@ export const shortcutCommand: Command.CommandType = {
   action(options, terminal): void {
     const output: ComponentOutputType = {
       type: 'component',
-      component: () => import('./ShortcutBox'),
+      component: lazy(() => import('./ShortcutBox')),
     };
     terminal.writeResult(output);
   },

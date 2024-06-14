@@ -1,3 +1,5 @@
+import { lazy } from 'react';
+
 type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
@@ -24,7 +26,7 @@ const timingCommand: Command.CommandType = {
     }
     const output: ComponentOutputType = {
       type: 'component',
-      component: () => import('./TimingBox'),
+      component: lazy(() => import('./TimingBox')),
       props: {
         seconds,
       },
