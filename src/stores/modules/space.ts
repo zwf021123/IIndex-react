@@ -1,7 +1,7 @@
-import { getCurrentSpace } from '@/api/space';
+import { getCurrentSpace, updateSpace } from '@/api/space';
 import { pathReg } from '@/constants/regExp';
 import { isValidKey } from '@/utils/tools';
-import { proxy } from '@umijs/max';
+import { proxy, subscribe } from '@umijs/max';
 import _ from 'lodash';
 
 // 用于在监听state变化时，筛选某些不需要的行为
@@ -535,3 +535,13 @@ export const SpaceStore = () => {
     ...spaceActions,
   };
 };
+
+/**
+ * 订阅spaceStore发请求保存数据
+ */
+// 订阅
+subscribe(spaceStore, async () => {
+  console.log('configStore changed', spaceStore);
+  // localStorage.setItem('config-store', JSON.stringify(spaceStore));
+  await updateSpace(spaceStore);
+});
