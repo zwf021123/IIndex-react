@@ -6,7 +6,7 @@ const myAxios = axios.create({
   baseURL:
     process.env.NODE_ENV === 'production'
       ? 'http://106.53.22.27/api'
-      : 'http://localhost:8000/api',
+      : 'http://localhost:5000/api',
 });
 
 // 配置请求携带cookie
@@ -34,7 +34,13 @@ myAxios.interceptors.response.use(
   function (error) {
     console.log('响应错误', error);
 
-    message.error(`${error.response.status}: ${error.response.data.message}`);
+    message.error(
+      `${error.response.status}: ${
+        error.response.data.message ||
+        error.response.statusText ||
+        error.message
+      }`,
+    );
     // if(error.response.status === 401){
     // message.error("error");
     // 对响应错误做点什么

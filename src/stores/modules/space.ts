@@ -109,7 +109,7 @@ export const spaceActions = {
   async requestSpace() {
     const spaceRes: any = await getCurrentSpace();
     if (spaceRes?.code === 0) {
-      this.setSpace(JSON.parse(spaceRes.data.bindingSpace));
+      spaceActions.setSpace(JSON.parse(spaceRes.data.bindingSpace));
     }
   },
   /**
@@ -244,7 +244,7 @@ export const spaceActions = {
     completely: boolean,
   ): Promise<void> {
     return new Promise((resolve, reject) => {
-      const items = this.listItems(sourcePath, true);
+      const items = spaceActions.listItems(sourcePath, true);
       // console.log("items", items);
       const itemName = getItemName(sourcePath);
       if (completely) {
@@ -252,7 +252,7 @@ export const spaceActions = {
         const newDirPath = targetPath + itemName;
         if (!spaceStore.space[newDirPath]) {
           try {
-            this.addItem({
+            spaceActions.addItem({
               dir: targetPath,
               name: itemName,
               type: 'dir',
@@ -272,7 +272,7 @@ export const spaceActions = {
 
         // 如果这一项是一个目录，则递归调用 copyDirectory
         if (item.type === 'dir') {
-          this.copyDirectory(item.dir, targetItemPath, completely);
+          spaceActions.copyDirectory(item.dir, targetItemPath, completely);
         } else {
           // 否则，直接复制这一项
           spaceStore.space[targetItemPath] = {
@@ -288,15 +288,15 @@ export const spaceActions = {
    * 递归更新目录下全部内容
    */
   updateDirectory(oldPath: string, newName: string): Space.ResultType {
-    const items = this.listItems(oldPath, true);
+    const items = spaceActions.listItems(oldPath, true);
     for (const item of items) {
       // 计算在目标目录中的路径
       const tempFullPath = getFullPath(item.dir, item.name);
       const tempArr = item.dir.split('/');
       tempArr[1] = newName;
       item.dir = tempArr.join('/');
-      this.addItem({ ...item });
-      this.deleteItem(tempFullPath, false);
+      spaceActions.addItem({ ...item });
+      spaceActions.deleteItem(tempFullPath, false);
     }
     return {
       result: true,
@@ -324,12 +324,12 @@ export const spaceActions = {
       }
       if (spaceStore.space[fullPath].type === 'dir') {
         // 递归更新子目录
-        const p1 = this.addItem({
+        const p1 = spaceActions.addItem({
           ...spaceStore.space[fullPath],
           name,
         });
-        const p2 = this.deleteItem(fullPath, false);
-        const p3 = this.updateDirectory(fullPath, name);
+        const p2 = spaceActions.deleteItem(fullPath, false);
+        const p3 = spaceActions.updateDirectory(fullPath, name);
         Promise.all([p1, p2, p3])
           .then(() => {
             resolve(fullPath);
@@ -343,8 +343,8 @@ export const spaceActions = {
           name,
           link,
         };
-        const p2 = this.deleteItem(fullPath, false);
-        const p1 = this.addItem(newItem);
+        const p2 = spaceActions.deleteItem(fullPath, false);
+        const p1 = spaceActions.addItem(newItem);
         Promise.all([p1, p2])
           .then(() => {
             resolve(fullPath);
@@ -407,7 +407,8 @@ export const spaceActions = {
         return;
       }
       if (sourceItem.type === 'dir' && recursive) {
-        this.copyDirectory(sourceFullPath, targetFullPath, completely)
+        spaceActions
+          .copyDirectory(sourceFullPath, targetFullPath, completely)
           .then(() => {
             resolve(targetFullPath);
           })
@@ -420,7 +421,8 @@ export const spaceActions = {
       const targetItem = { ...sourceItem };
       targetItem.dir = targetFullPath;
       targetItem.name = getItemName(sourceFullPath);
-      this.addItem(targetItem)
+      spaceActions
+        .addItem(targetItem)
         .then(() => {
           resolve(targetFullPath);
         })
@@ -442,8 +444,8 @@ export const spaceActions = {
     completely = false,
   ): Promise<string> {
     return new Promise((resolve, reject) => {
-      const p1 = this.copyItem(source, target, recursive, completely);
-      const p2 = this.deleteItem(source, recursive);
+      const p1 = spaceActions.copyItem(source, target, recursive, completely);
+      const p2 = spaceActions.deleteItem(source, recursive);
       Promise.all([p1, p2])
         .then(() => {
           resolve('移动成功');

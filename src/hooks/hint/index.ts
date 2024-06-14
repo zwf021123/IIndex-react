@@ -56,6 +56,7 @@ export const useHint = () => {
         command.current.subCommands[likeKey],
         command.current,
       );
+
       setHintValue(usageStr);
       // 获取提示后再更新command
       command.current = command.current.subCommands[likeKey];

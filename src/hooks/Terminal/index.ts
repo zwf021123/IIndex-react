@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { first, second } from '@/constants/welcome';
 import { doCommandExecute } from '@/core/commandExecutor';
 import { useHint, useHistory } from '@/hooks';
-import { configStore, spaceActions } from '@/stores';
+import { configStore, spaceActions, userActions } from '@/stores';
 import { registerShortcuts } from '@/utils/keyboardUtils';
 import { likeSearch } from '@/utils/likeSearch';
 import { InputRef } from 'antd';
@@ -27,6 +27,7 @@ export const useTerminal = (
    */
   const configStoreSnap = useSnapshot(configStore);
   const { autoCompletePath } = spaceActions;
+  const { getAndSetLoginUser } = userActions;
 
   /**
    * 命令列表
@@ -59,6 +60,7 @@ export const useTerminal = (
    * Refs
    */
   const hintValueRef = useRef<string>('');
+  const inputCommandSnap = useRef<Terminal.CommandInputType | null>(null);
   /**
    * Hooks
    */
@@ -205,7 +207,7 @@ export const useTerminal = (
    */
   const setTabCompletion = () => {
     let hintValue = hintValueRef.current;
-    console.log('setTabCompletion传入参数', JSON.stringify(hintValue));
+    let inputCommand = inputCommandSnap.current;
     if (hintValue) {
       const wordArr = inputCommand!.text.split(/\s+/);
       const hintArr = hintValue.split(/\s+/);
@@ -351,17 +353,23 @@ export const useTerminal = (
   }, [outputList]);
 
   /**
-   * 同步hintValue
+   * 同步state
    */
   useEffect(() => {
     hintValueRef.current = hintValue;
-  }, [hintValue]);
+    inputCommandSnap.current = inputCommand;
+  }, [hintValue, inputCommand]);
 
   /**
    * 挂载时
    */
   useEffect(() => {
+    // 获取登录态
+    getAndSetLoginUser();
+    // 注册快捷键
     registerShortcuts(terminal);
+    // 监听空间状态改变并 发请求保存用户空间数据
+
     const { welcomeTexts } = configStoreSnap;
     if (welcomeTexts?.length > 0) {
       welcomeTexts.forEach((welcomeText) => {

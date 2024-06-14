@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { userRegister } from '@/api/user';
+import type { AxiosError } from 'axios';
 
 /**
  * 用户注册命令
@@ -45,11 +47,11 @@ const registerCommand: Command.CommandType = {
       terminal.writeTextErrorResult('请输入邮箱');
       return;
     }
-    const res: any = await userRegister(username, password, email);
-    if (res?.code === 0) {
+    try {
+      const res: any = await userRegister(username, password, email);
       terminal.writeTextSuccessResult('注册成功');
-    } else {
-      terminal.writeTextErrorResult(res?.message ?? '注册失败');
+    } catch (error: AxiosError | any) {
+      terminal.writeTextErrorResult(error.response.message ?? '注册失败');
     }
   },
 };

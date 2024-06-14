@@ -1,9 +1,10 @@
 import { getLoginUser } from '@/api/user';
 import { LOCAL_USER } from '@/constants/user';
 import { derive, proxy, subscribe } from '@umijs/max';
+import { SpaceStore } from './space';
 
 export const userStore = proxy(
-  JSON.parse(localStorage.getItem('user-store')) || {
+  JSON.parse(String(localStorage.getItem('user-store'))) || {
     loginUser: {
       ...LOCAL_USER,
     },
@@ -12,12 +13,12 @@ export const userStore = proxy(
 
 export const userActions = {
   async getAndSetLoginUser() {
-    // const { requestSpace } = SpaceStore();
+    const { requestSpace } = SpaceStore();
     const res: any = await getLoginUser();
     if (res?.code === 0 && res.data) {
       userStore.loginUser = res.data;
       // 登录成功后，同时请求用户的空间信息
-      // requestSpace();
+      requestSpace();
     } else {
       userActions.resetLoginUser();
     }

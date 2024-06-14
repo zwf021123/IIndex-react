@@ -1,12 +1,11 @@
-import { Command } from '@/core/type';
 import myAxios from '@/requests/myAxios';
-import { configStore } from '@/stores';
+import { configActions } from '@/stores';
 
 /**
  * 切换终端背景
  * @author zwf021123
  */
-export const backgroundCommand: Command.Command.CommandType = {
+export const backgroundCommand: Command.CommandType = {
   func: 'background',
   name: '切换终端背景',
   alias: ['bg'],
@@ -34,9 +33,9 @@ export const backgroundCommand: Command.Command.CommandType = {
   action(options, terminal) {
     const { _, category } = options;
     let url = _[0];
-    const { setBackground } = configStore();
+    const { setBackground } = configActions;
     if (!url) {
-      terminal.setLoading(true);
+      // terminal.setLoading(true);
       // 随机获取壁纸
       myAxios
         .post('/background/get/random', {
@@ -47,7 +46,7 @@ export const backgroundCommand: Command.Command.CommandType = {
           setBackground(res.data);
         })
         .finally(() => {
-          terminal.setLoading(false);
+          // terminal.setLoading(false);
         });
       return;
     }
