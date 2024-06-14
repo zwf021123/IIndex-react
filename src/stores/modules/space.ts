@@ -385,6 +385,7 @@ export const spaceActions = {
       // 源条目不存在
       const sourceItem = spaceStore.space[sourceFullPath];
       if (!sourceItem) {
+        console.log('sourceFullPath', sourceFullPath);
         reject('原条目不存在');
         return;
       }
@@ -443,16 +444,24 @@ export const spaceActions = {
     recursive = false,
     completely = false,
   ): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const p1 = spaceActions.copyItem(source, target, recursive, completely);
-      const p2 = spaceActions.deleteItem(source, recursive);
-      Promise.all([p1, p2])
-        .then(() => {
-          resolve('移动成功');
-        })
-        .catch((errMsg) => {
-          reject(errMsg);
-        });
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve, reject) => {
+      try {
+        await spaceActions.copyItem(source, target, recursive, completely);
+        await spaceActions.deleteItem(source, recursive);
+        resolve('移动成功');
+      } catch (errMsg) {
+        reject(errMsg);
+      }
+      // const p1 = spaceActions.copyItem(source, target, recursive, completely);
+      // const p2 = spaceActions.deleteItem(source, recursive);
+      // Promise.all([p1, p2])
+      //   .then(() => {
+      //     resolve('移动成功');
+      //   })
+      //   .catch((errMsg) => {
+      //     reject(errMsg);
+      //   });
     });
   },
   /**
@@ -518,6 +527,7 @@ export const spaceActions = {
     // 调用 getFullPath 处理./ ../
     const tempName = getFullPath(spaceStore.currentDir, prePath);
     // 拼接可能的路径前缀
+
     const result = Object.keys(spaceStore.space).filter((key) =>
       key.startsWith(tempName + nxtPath),
     )[0];

@@ -1,7 +1,5 @@
 import { SpaceStore } from '@/stores';
 
-import { SpaceItemType } from '@/types/space';
-
 /**
  * 创建目录
  */
@@ -11,7 +9,7 @@ const mkdirCommand: Command.CommandType = {
   params: [
     {
       key: 'dir',
-      desc: '新目录路径',
+      desc: '新目录名称',
       required: true,
     },
   ],
@@ -24,7 +22,7 @@ const mkdirCommand: Command.CommandType = {
     }
     const spaceStore = SpaceStore();
     const newDir = _[0];
-    const item: SpaceItemType = {
+    const item: Space.SpaceItemType = {
       dir: spaceStore.currentDir,
       name: newDir,
       type: 'dir',

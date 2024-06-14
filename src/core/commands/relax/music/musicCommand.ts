@@ -1,4 +1,5 @@
 import { getSingleMusic } from '@/api/music';
+import { lazy } from 'react';
 
 type ComponentOutputType = Terminal.ComponentOutputType;
 
@@ -33,7 +34,7 @@ const musicCommand: Command.CommandType = {
       musicPath = `//music.163.com/outchain/player?type=2&id=${music.id}&auto=1&height=66`;
       const output: ComponentOutputType = {
         type: 'component',
-        component: () => import('./MusicBox'),
+        component: lazy(() => import('./MusicBox')),
         props: {
           musicPath,
         },

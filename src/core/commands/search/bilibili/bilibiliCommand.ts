@@ -1,6 +1,6 @@
-type ComponentOutputType = Terminal.ComponentOutputType;
+import { lazy } from 'react';
 
-const baseUrl = 'https://www.baidu.com/s';
+type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
  * B 站搜索命令
@@ -39,7 +39,7 @@ const bilibiliCommand: Command.CommandType = {
     if (bvid) {
       const output: ComponentOutputType = {
         type: 'component',
-        component: () => import('./BilibiliBox'),
+        component: lazy(() => import('./BilibiliBox')),
         props: {
           bvid,
         },
@@ -47,8 +47,6 @@ const bilibiliCommand: Command.CommandType = {
       terminal.writeResult(output);
       return;
     }
-    console.log('self', self);
-    console.log('self', typeof self);
 
     const word = _.length > 0 ? _[0] : '';
     const targetLink = `https://search.bilibili.com/all?keyword=${word}`;

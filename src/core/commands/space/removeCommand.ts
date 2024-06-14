@@ -33,17 +33,26 @@ const removeCommand: Command.CommandType = {
     },
   ],
   async action(options: ParsedOptions, terminal): Promise<void> {
+    const spaceStore = SpaceStore();
     const { _, recursive = false, force } = options;
     if (_.length < 1) {
       terminal.writeTextErrorResult('参数不足');
       return;
     }
     const deleteKey = _[0];
+    const deleteItem = spaceStore.getItem(deleteKey);
+    if (!deleteItem) {
+      terminal.writeTextErrorResult('未找到该条目');
+      return;
+    }
+    if (deleteItem.type === 'dir' && !recursive) {
+      terminal.writeTextErrorResult('请确认是否递归删除');
+      return;
+    }
     if (recursive && !force) {
       terminal.writeTextErrorResult('请确认要强制删除');
       return;
     }
-    const spaceStore = SpaceStore();
     try {
       await spaceStore.deleteItem(deleteKey, recursive);
       terminal.writeTextSuccessResult('删除成功');

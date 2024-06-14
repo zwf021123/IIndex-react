@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { userRegister } from '@/api/user';
 import type { AxiosError } from 'axios';
 

@@ -1,4 +1,5 @@
 import { listHotMusics } from '@/api/music';
+import { lazy } from 'react';
 
 type ComponentOutputType = Terminal.ComponentOutputType;
 
@@ -29,7 +30,7 @@ const hotCommand: Command.CommandType = {
       }
       const output: ComponentOutputType = {
         type: 'component',
-        component: () => import('./HotBox'),
+        component: lazy(() => import('./HotBox')),
         props: {
           songList,
         },

@@ -38,7 +38,7 @@ const addCommand: Command.CommandType = {
       return;
     }
     const isDir = spaceStore.getItem(dir)?.type === 'dir';
-    if (isDir) {
+    if (isDir && link) {
       terminal.writeTextErrorResult('不能更新目录的link字段');
       return;
     }

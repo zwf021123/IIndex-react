@@ -24,7 +24,7 @@ const ContentOutput: React.FC<OutputProps> = ({ output }: OutputProps) => {
       ) : (
         output.component && (
           <Suspense fallback={<Spin spinning={true} />}>
-            <Component></Component>
+            <Component {...(output.props ?? {})}></Component>
           </Suspense>
         )
       )}

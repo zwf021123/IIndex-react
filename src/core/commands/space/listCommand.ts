@@ -27,8 +27,12 @@ const listCommand: Command.CommandType = {
   collapsible: true,
   action(options: ParsedOptions, terminal): void {
     const { _, recursive } = options;
-    const { listItems, currentDir } = SpaceStore();
+    const { getItem, listItems, currentDir } = SpaceStore();
     let dir = _[0] ?? currentDir;
+    if (getItem(dir)?.type !== 'dir') {
+      terminal.writeTextErrorResult('目录不存在');
+      return;
+    }
     const resultList = listItems(dir, recursive);
     resultList.forEach((item) => {
       let output = `${item.name} ${item.link}`;

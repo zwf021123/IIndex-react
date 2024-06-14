@@ -1,3 +1,5 @@
+import { lazy } from 'react';
+
 type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
@@ -12,7 +14,7 @@ const ddosCommand: Command.CommandType = {
   action(options, terminal) {
     const output: ComponentOutputType = {
       type: 'component',
-      component: () => import('./DdosBox'),
+      component: lazy(() => import('./DdosBox')),
       props: {},
     };
     terminal.writeResult(output);

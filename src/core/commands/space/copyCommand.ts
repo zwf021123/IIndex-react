@@ -29,7 +29,7 @@ const copyCommand: Command.CommandType = {
     },
     {
       key: 'completely',
-      desc: '是否完全复制',
+      desc: '是否完全复制(即是否复制目录本身)',
       alias: ['c'],
       type: 'boolean',
       defaultValue: false,

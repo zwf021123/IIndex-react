@@ -29,7 +29,7 @@ const moveCommand: Command.CommandType = {
     },
     {
       key: 'completely',
-      desc: '是否完全移动',
+      desc: '是否完全移动(即是否移动目录本身)',
       alias: ['c'],
       type: 'boolean',
       defaultValue: false,

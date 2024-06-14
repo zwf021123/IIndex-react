@@ -1,3 +1,5 @@
+import { lazy } from 'react';
+
 type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
@@ -12,7 +14,7 @@ const moyuCommand: Command.CommandType = {
   action(options, terminal) {
     const output: ComponentOutputType = {
       type: 'component',
-      component: () => import('./MoYuBox'),
+      component: lazy(() => import('./MoYuBox')),
       props: {},
     };
     terminal.writeResult(output);

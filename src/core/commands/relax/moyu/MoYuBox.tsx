@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import './MoYuBox.less';
 
 const MoYuBox = () => {
@@ -15,12 +16,16 @@ const MoYuBox = () => {
     'https://haiyong.site/moyu/SpaceHuggers/',
     'https://haiyong.site/moyu/weijing/',
   ];
+  console.log('moyu组件重新渲染', 1);
 
-  const currentGame = gameList[Math.floor(Math.random() * gameList.length)];
+  const currentGame = useRef<string>('');
+  if (!currentGame.current) {
+    currentGame.current = gameList[Math.floor(Math.random() * gameList.length)];
+  }
   return (
     <div style={{ margin: '8px 0' }}>
       <iframe
-        src={currentGame}
+        src={currentGame.current}
         className="main"
         frameBorder="no"
         scrolling="no"

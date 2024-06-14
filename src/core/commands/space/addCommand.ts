@@ -1,7 +1,5 @@
 import { SpaceStore } from '@/stores';
 
-import { SpaceItemType } from '@/types/space';
-
 /**
  * 新增
  */
@@ -49,7 +47,7 @@ const addCommand: Command.CommandType = {
     if (!link.startsWith('http://') && !link.startsWith('https://')) {
       link = 'http://' + link;
     }
-    const item: SpaceItemType = {
+    const item: Space.SpaceItemType = {
       dir,
       link,
       name,

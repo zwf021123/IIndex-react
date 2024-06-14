@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useSnapshot } from '@umijs/max';
 import type { InputRef } from 'antd';
 import { Collapse, Input, Spin } from 'antd';
@@ -84,7 +83,7 @@ const Terminal: React.FC<TerminalProps> = ({
   /**
    * 当点击空白聚焦输入框
    */
-  const handleClickWrapper = (event: React.MouseEvent) => {
+  const handleClickWrapper = (event: any) => {
     if (event.target.className === 'terminal') {
       terminal.focusInput();
     }
