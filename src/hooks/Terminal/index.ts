@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { first, second } from '@/constants/welcome';
 import { doCommandExecute } from '@/core/commandExecutor';
 import { useHint, useHistory } from '@/hooks';
-import { configStore, spaceActions, userActions } from '@/stores';
+import { configStore, spaceActions, spaceStore, userActions } from '@/stores';
 import { registerShortcuts } from '@/utils/keyboardUtils';
 import { likeSearch } from '@/utils/likeSearch';
 import { InputRef } from 'antd';
@@ -26,6 +26,7 @@ export const useTerminal = (
    * store
    */
   const configStoreSnap = useSnapshot(configStore);
+  const spaceStoreSnap = useSnapshot(spaceStore);
   const { autoCompletePath } = spaceActions;
   const { getAndSetLoginUser } = userActions;
 
@@ -307,7 +308,7 @@ export const useTerminal = (
       text: inputText,
       type: 'command',
       resultList: [],
-      // dir: SpaceStore().currentDir,
+      dir: spaceStoreSnap.currentDir,
     };
     // 记录当前命令，便于写入结果
     currentNewCommand = newCommand;

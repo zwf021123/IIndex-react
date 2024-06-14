@@ -9,7 +9,7 @@ const { Panel } = Collapse;
 import ContentOutput from '@/components/ContentOutput';
 import { LOCAL_USER } from '@/constants/user';
 import { useTerminal } from '@/hooks';
-import { configStore } from '@/stores';
+import { configStore, spaceStore, userStore } from '@/stores';
 
 type TerminalProps = {
   fullScreen?: boolean;
@@ -26,6 +26,8 @@ const Terminal: React.FC<TerminalProps> = ({
    * store
    */
   const configStoreSnap = useSnapshot(configStore);
+  const { loginUser } = useSnapshot(userStore);
+  const spaceStoreSnap: Space.SpaceStateType = useSnapshot(spaceStore);
 
   /**
    * state
@@ -73,8 +75,7 @@ const Terminal: React.FC<TerminalProps> = ({
     // 从配置中获取背景
   };
 
-  const prompt = `user@${user.username}:~#`;
-
+  const prompt = `user@${loginUser.username}:~${spaceStoreSnap.currentDir}#`;
   const handleCoppapseChange = (key: string[] | string) => {
     console.log('key', key);
     setActiveKeys(key as string[]);
@@ -117,7 +118,8 @@ const Terminal: React.FC<TerminalProps> = ({
                 header={
                   <>
                     <span style={{ userSelect: 'none', marginRight: '10px' }}>
-                      {prompt}
+                      {/* 需要展示已执行命令的所在目录 */}
+                      {`user@${user.username}:~${output.dir}#`}
                     </span>
                     <span>{output.text}</span>
                   </>
@@ -135,7 +137,8 @@ const Terminal: React.FC<TerminalProps> = ({
               <Fragment key={index}>
                 <div className="terminal-row">
                   <span style={{ userSelect: 'none', marginRight: '10px' }}>
-                    {prompt}
+                    {/* 需要展示已执行命令的所在目录 */}
+                    {`user@${loginUser.username}:~${output.dir}#`}
                   </span>
                   <span>{output.text}</span>
                 </div>
