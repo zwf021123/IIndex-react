@@ -9,7 +9,7 @@ interface VariableBoxProps {
   searchText: string;
 }
 
-export const VarbookBox: React.FC<VariableBoxProps> = ({ searchText }) => {
+const VarbookBox: React.FC<VariableBoxProps> = ({ searchText }) => {
   const [variablesTable, setVariablesTable] = useState<any>({});
   const [loadOK, setLoadOK] = useState(false);
   const [output, setOutput] = useState<Terminal.OutputType>({
@@ -41,24 +41,31 @@ export const VarbookBox: React.FC<VariableBoxProps> = ({ searchText }) => {
     <div className={`main ${variablesTable.source ? 'success' : 'warning'}`}>
       <Spin
         spinning={!loadOK}
-        style={{
-          height: !loadOK ? '283px' : '',
-          // position: !loadOK ? 'inherit' : '',
-        }}
+        style={
+          {
+            // height: !loadOK ? '283px' : '',
+            // position: !loadOK ? 'inherit' : '',
+          }
+        }
       >
         {loadOK && (
           <div>
-            <Table
-              className="table"
-              size="small"
-              dataSource={variablesTable?.source}
-              columns={variablesTable?.columns}
-              pagination={false}
-            ></Table>
-            <ContentOutput output={output} />
+            {variablesTable?.source ? (
+              <Table
+                className="table"
+                size="small"
+                dataSource={variablesTable?.source}
+                columns={variablesTable?.columns}
+                pagination={false}
+              ></Table>
+            ) : (
+              <ContentOutput output={output} />
+            )}
           </div>
         )}
       </Spin>
     </div>
   );
 };
+
+export default VarbookBox;

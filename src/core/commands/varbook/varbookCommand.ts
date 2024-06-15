@@ -1,4 +1,3 @@
-import { checkSearchText } from './standard';
 type ComponentOutputType = Terminal.ComponentOutputType;
 
 /**
@@ -20,17 +19,17 @@ const varbookCommand: Command.CommandType = {
   options: [],
   collapsible: true,
   action(options, terminal) {
-    const _ = options._.join(' ');
-    const searchText: string | boolean = checkSearchText(_, terminal);
-    if (!searchText) return;
-    const output: ComponentOutputType = {
-      type: 'component',
-      component: () => import('./VarbookBox'),
-      props: {
-        searchText,
-      },
-    };
-    terminal.writeResult(output);
+    // const _ = options._.join(' ');
+    // const searchText: string | boolean = checkSearchText(_, terminal);
+    // if (!searchText) return;
+    // const output: ComponentOutputType = {
+    //   type: 'component',
+    //   component: lazy(() => import('./VarbookBox')),
+    //   props: {
+    //     searchText,
+    //   },
+    // };
+    terminal.writeTextErrorResult('该命令待维护中，暂不可用');
   },
 };
 
