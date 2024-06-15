@@ -1,3 +1,4 @@
+import { lazy } from 'react';
 import addCommand from './subCommands/addCommand';
 type ComponentOutputType = Terminal.ComponentOutputType;
 
@@ -26,7 +27,7 @@ const todoCommand: Command.CommandType = {
     if (_.length < 1) {
       const output: ComponentOutputType = {
         type: 'component',
-        component: () => import('./TodoBox'),
+        component: lazy(() => import('./TodoBox')),
       };
       terminal.writeResult(output);
       return;

@@ -35,17 +35,15 @@ const TimingBox: React.FC<{ seconds: string }> = ({ seconds }) => {
       if (start) {
         setLeftTime((leftTime) => leftTime - 1);
       }
+      console.log('leftTimeRef.current', leftTimeRef.current);
+
       if (leftTimeRef.current <= 1) {
         alert(`${seconds} 秒倒计时结束`);
-        if (interval.current) {
-          clearInterval(interval.current);
-        }
+        clearInterval(interval.current);
       }
     }, 1000);
     return () => {
-      if (interval.current) {
-        clearInterval(interval.current);
-      }
+      clearInterval(interval.current);
     };
   }, []);
 

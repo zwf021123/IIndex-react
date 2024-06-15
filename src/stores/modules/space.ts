@@ -1,14 +1,10 @@
 import { getCurrentSpace, updateSpace } from '@/api/space';
 import { pathReg } from '@/constants/regExp';
+import { userDerived } from '@/stores';
 import { isValidKey } from '@/utils/tools';
 import { proxy, subscribe } from '@umijs/max';
+import { message } from 'antd';
 import _ from 'lodash';
-
-// 用于在监听state变化时，筛选某些不需要的行为
-export let executeUpdate = true;
-export const troggerExecuteUpdate = () => {
-  executeUpdate = !executeUpdate;
-};
 
 const initSpace: Space.SpaceStateType = {
   space: {
@@ -109,14 +105,15 @@ export const spaceActions = {
   async requestSpace() {
     const spaceRes: any = await getCurrentSpace();
     if (spaceRes?.code === 0) {
-      spaceActions.setSpace(JSON.parse(spaceRes.data.bindingSpace));
+      // 注意非空判断
+      if (spaceRes.data.bindingSpace)
+        spaceActions.setSpace(JSON.parse(spaceRes.data.bindingSpace));
     }
   },
   /**
    * 设置空间
    */
   setSpace(spaceData: Space.SpaceStateType) {
-    console.log('setSpace', spaceData);
     spaceStore.space = spaceData.space;
     spaceStore.currentDir = spaceData.currentDir;
   },
@@ -553,5 +550,9 @@ export const SpaceStore = () => {
 subscribe(spaceStore, async () => {
   console.log('configStore changed', spaceStore);
   // localStorage.setItem('config-store', JSON.stringify(spaceStore));
-  await updateSpace(spaceStore);
+  if (userDerived.isLogin) {
+    await updateSpace(spaceStore);
+  } else {
+    message.warning('请先登录，否则数据无法保存');
+  }
 });

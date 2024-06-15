@@ -53,6 +53,18 @@ export const todoActions = {
     }
     todoStore.taskList[index] = { ...todoStore.taskList[index], ...newTask };
   },
+  /**
+   * 切换任务状态
+   * @param index
+   */
+  toggleTask(index: number) {
+    if (index < 0 || index >= todoStore.taskList.length) {
+      return false;
+    }
+    todoStore.taskList[index].isFinished =
+      !todoStore.taskList[index].isFinished;
+    return true;
+  },
 };
 // 订阅
 subscribe(todoStore, () => {

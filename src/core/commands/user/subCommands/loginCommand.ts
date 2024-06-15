@@ -1,7 +1,6 @@
 import { userLogin } from '@/api/user';
-import { SpaceStore, UserStore } from '@/stores';
-import { troggerExecuteUpdate } from '@/stores/modules/space';
-
+import { SpaceStore, userActions, userDerived } from '@/stores';
+import type { AxiosError } from 'axios';
 /**
  * 用户登录命令
  * @author zwf021123
@@ -27,9 +26,9 @@ const loginCommand: Command.CommandType = {
     },
   ],
   async action(options, terminal) {
-    const { setLoginUser, isLogin } = UserStore();
+    const { setLoginUser } = userActions;
     const { requestSpace } = SpaceStore();
-    if (isLogin) {
+    if (userDerived.isLogin) {
       terminal.writeTextErrorResult('请先退出登录');
       return;
     }
@@ -42,24 +41,17 @@ const loginCommand: Command.CommandType = {
       terminal.writeTextErrorResult('请输入密码');
       return;
     }
-    // const res: any = await userLogin(username, password);
-    // console.log(await getCurrentSpace());
+
     try {
       const loginRes: any = await userLogin(username, password);
       if (loginRes?.code === 0) {
-        troggerExecuteUpdate();
         setLoginUser(loginRes.data);
         requestSpace();
         terminal.writeTextSuccessResult('登录成功');
-      } else {
-        // terminal.writeTextErrorResult(res?.message ?? "登录失败");
-        terminal.writeTextErrorResult('登录失败');
       }
-    } catch (e) {}
-    // const res: any = await Promise.all([
-    //   userLogin(username, password),
-    //   getCurrentSpace(),
-    // ]);
+    } catch (error: AxiosError | any) {
+      terminal.writeTextErrorResult('登录失败');
+    }
   },
 };
 

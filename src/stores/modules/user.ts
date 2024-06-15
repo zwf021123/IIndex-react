@@ -31,7 +31,7 @@ export const userActions = {
   },
 };
 // 计算属性
-derive({
+export const userDerived = derive({
   isLogin: (get) => !!get(userStore).loginUser.id,
 });
 // 订阅
