@@ -1,5 +1,10 @@
 import { userLogin } from '@/api/user';
-import { SpaceStore, userActions, userDerived } from '@/stores';
+import {
+  SpaceStore,
+  troggerExecuteUpdate,
+  userActions,
+  userDerived,
+} from '@/stores';
 import type { AxiosError } from 'axios';
 /**
  * 用户登录命令
@@ -45,6 +50,7 @@ const loginCommand: Command.CommandType = {
     try {
       const loginRes: any = await userLogin(username, password);
       if (loginRes?.code === 0) {
+        troggerExecuteUpdate();
         setLoginUser(loginRes.data);
         requestSpace();
         terminal.writeTextSuccessResult('登录成功');

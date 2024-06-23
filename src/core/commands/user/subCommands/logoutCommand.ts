@@ -1,6 +1,11 @@
 import { userLogout } from '@/api/user';
 import { LOCAL_USER } from '@/constants/user';
-import { SpaceStore, userActions, userDerived } from '@/stores';
+import {
+  SpaceStore,
+  troggerExecuteUpdate,
+  userActions,
+  userDerived,
+} from '@/stores';
 import type { AxiosError } from 'axios';
 /**
  * 用户注销命令
@@ -21,6 +26,7 @@ const logoutCommand: Command.CommandType = {
     try {
       const res: any = await userLogout();
       if (res?.code === 0) {
+        troggerExecuteUpdate();
         setLoginUser(LOCAL_USER);
         resetSpace();
         terminal.writeTextSuccessResult('已退出登录,bye~');

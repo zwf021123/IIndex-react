@@ -5,6 +5,12 @@ import { proxy, subscribe } from '@umijs/max';
 import { message } from 'antd';
 import _ from 'lodash';
 
+// 用于在监听state变化时，筛选某些不需要的行为
+export let executeUpdate = true;
+export const troggerExecuteUpdate = () => {
+  executeUpdate = !executeUpdate;
+};
+
 const initSpace: Space.SpaceStateType = {
   space: {
     '/': {
@@ -553,6 +559,11 @@ subscribe(spaceStore, async () => {
   console.log('spaceStore changed', spaceStore);
   if (userDerived.isLogin) {
     try {
+      if (!executeUpdate) {
+        // 跳过一次更新
+        troggerExecuteUpdate();
+        return;
+      }
       await updateSpace(spaceStore);
     } catch (e) {
       message.error('数据保存失败');

@@ -5,7 +5,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { first, second } from '@/constants/welcome';
 import { doCommandExecute } from '@/core/commandExecutor';
 import { useHint, useHistory } from '@/hooks';
-import { configStore, spaceActions, spaceStore, userActions } from '@/stores';
+import {
+  configStore,
+  spaceActions,
+  spaceStore,
+  troggerExecuteUpdate,
+  userActions,
+} from '@/stores';
 import { registerShortcuts } from '@/utils/keyboardUtils';
 import { likeSearch } from '@/utils/likeSearch';
 import { InputRef } from 'antd';
@@ -386,6 +392,8 @@ export const useTerminal = (
    * 挂载时
    */
   useEffect(() => {
+    // 跳过更新space请求
+    troggerExecuteUpdate();
     // 获取登录态
     getAndSetLoginUser();
     // 注册快捷键
