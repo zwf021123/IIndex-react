@@ -222,8 +222,8 @@ export const useTerminal = (
        * 还是得新建一个方法进行补全，不然使用getFullPath补全会一直补全为绝对路径)
        */
       if (
-        currentHintWord.indexOf('目录') !== -1 ||
-        currentHintWord.indexOf('路径') !== -1
+        currentHintWord?.indexOf('目录') !== -1 ||
+        currentHintWord?.indexOf('路径') !== -1
       ) {
         // 路径补全
         const text =
@@ -335,14 +335,35 @@ export const useTerminal = (
     // 默认展开折叠面板
     if (outputList.length > 0) {
       // 因为初次挂载后，outputList的长度变为3，所以activeKeys的长度默认多一个2
-
       setActiveKeys([...activeKeys, outputList.length - 1]);
       // 自动滚到底部
+
       setTimeout(() => {
         if (terminalRef.current) {
+          // console.log(
+          //   '调试使用500ms',
+          //   terminalRef.current.scrollTop,
+          //   terminalRef.current.scrollHeight,
+          // );
           terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+          // terminalRef.current.scrollTo({
+          //   top: terminalRef.current.scrollHeight,
+          //   behavior: 'smooth',
+          // });
         }
-      }, 500);
+      }, 300);
+
+      // setTimeout(() => {
+      //   if (terminalRef.current) {
+      //     // terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+      //     console.log(
+      //       '调试使用50ms',
+      //       terminalRef.current.scrollTop,
+      //       terminalRef.current.scrollHeight,
+      //     );
+      //   }
+      // }, 50);
+
       // if (terminalRef.current) {
       //   console.log(
       //     '延迟200ms后滚动到底部：',

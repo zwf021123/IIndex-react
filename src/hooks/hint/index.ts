@@ -17,13 +17,7 @@ export const useHint = () => {
 
   const [hintValue, setHintValue] = useState('');
   // 记录匹配到的命令（便于后续提示操作）
-  // const inputCommandSnap = useRef<Terminal.CommandInputType | null>(null);
   const command = useRef<Command.CommandType | null>(null);
-
-  // useEffect(() => {
-  //   // 同步inputCommand
-  //   inputCommandSnap.current = inputCommand;
-  // }, [inputCommand]);
 
   const setHint = (inputText: string) => {
     // 未开启提示

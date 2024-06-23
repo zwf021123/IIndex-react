@@ -1,7 +1,7 @@
 import { useSnapshot } from '@umijs/max';
 import type { InputRef } from 'antd';
 import { Collapse, Input, Spin } from 'antd';
-import React, { Fragment, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import './index.less';
 const { Panel } = Collapse;
 
@@ -60,7 +60,10 @@ const Terminal: React.FC<TerminalProps> = ({
     setActiveKeys,
   } = useTerminal(inputRef, terminalRef);
 
-  // const { hintValue, debounceSetHint } = useHint();
+  // 同步输入框内容到hint
+  useEffect(() => {
+    debounceSetHint(inputCommand.text);
+  }, [inputCommand.text]);
 
   const mainStyle: React.CSSProperties = fullScreen
     ? { position: 'fixed', top: 0, bottom: 0, left: 0, right: 0 }
@@ -164,7 +167,6 @@ const Terminal: React.FC<TerminalProps> = ({
             addonBefore={<span className="command-input-prompt">{prompt}</span>}
             onChange={(e) => {
               setInputCommand({ text: e.target.value });
-              debounceSetHint(e.target.value);
             }}
             onPressEnter={terminal.doSubmitCommand}
           ></Input>

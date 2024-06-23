@@ -22,14 +22,14 @@ const HotBox: React.FC<MusicBoxProps> = ({ songList }) => {
                 height="25"
                 alt=""
               />
-              <a
-                href={`https://music.163.com/#/song?id=${song?.id}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {song?.al?.name}
-              </a>
             </Popover>
+            <a
+              href={`https://music.163.com/#/song?id=${song?.id}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {song?.al?.name}
+            </a>
           </div>
         );
       })}
