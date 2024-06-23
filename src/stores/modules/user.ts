@@ -14,12 +14,14 @@ export const userStore = proxy(
 export const userActions = {
   async getAndSetLoginUser() {
     const { requestSpace } = SpaceStore();
-    const res: any = await getLoginUser();
-    if (res?.code === 0 && res.data) {
-      userStore.loginUser = res.data;
-      // 登录成功后，同时请求用户的空间信息
-      requestSpace();
-    } else {
+    try {
+      const res: any = await getLoginUser();
+      if (res?.code === 0 && res.data) {
+        userStore.loginUser = res.data;
+        // 登录成功后，同时请求用户的空间信息
+        requestSpace();
+      }
+    } catch (e) {
       userActions.resetLoginUser();
     }
   },

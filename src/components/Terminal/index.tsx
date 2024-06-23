@@ -6,7 +6,6 @@ import './index.less';
 const { Panel } = Collapse;
 
 import ContentOutput from '@/components/ContentOutput';
-import { LOCAL_USER } from '@/constants/user';
 import { useTerminal } from '@/hooks';
 import { configStore, spaceStore, userStore } from '@/stores';
 
@@ -19,7 +18,6 @@ type TerminalProps = {
 const Terminal: React.FC<TerminalProps> = ({
   fullScreen = false,
   height = 400,
-  user = LOCAL_USER,
 }: TerminalProps) => {
   /**
    * store
@@ -118,7 +116,7 @@ const Terminal: React.FC<TerminalProps> = ({
                   <>
                     <span style={{ userSelect: 'none', marginRight: '10px' }}>
                       {/* 需要展示已执行命令的所在目录 */}
-                      {`user@${user.username}:~${output.dir}#`}
+                      {`user@${loginUser.username}:~${output.dir}#`}
                     </span>
                     <span>{output.text}</span>
                   </>

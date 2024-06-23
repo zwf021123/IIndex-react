@@ -1,7 +1,6 @@
 import { getCurrentSpace, updateSpace } from '@/api/space';
 import { pathReg } from '@/constants/regExp';
 import { userDerived } from '@/stores';
-import { isValidKey } from '@/utils/tools';
 import { proxy, subscribe } from '@umijs/max';
 import { message } from 'antd';
 import _ from 'lodash';
@@ -93,22 +92,25 @@ export const spaceActions = {
    */
   resetSpace() {
     const resetObj = _.cloneDeep(initSpace);
-    Object.keys(resetObj).forEach((key: string) => {
-      if (isValidKey(key, spaceStore)) {
-        spaceStore[key] = resetObj[key];
-      }
-    });
+    spaceActions.setSpace(resetObj);
+    // Object.keys(resetObj).forEach((key: string) => {
+    //   if (isValidKey(key, spaceStore)) {
+    //     spaceStore[key] = resetObj[key];
+    //   }
+    // });
   },
   /**
    * 获取当前用户空间
    */
   async requestSpace() {
-    const spaceRes: any = await getCurrentSpace();
-    if (spaceRes?.code === 0) {
-      // 注意非空判断
-      if (spaceRes.data.bindingSpace)
-        spaceActions.setSpace(JSON.parse(spaceRes.data.bindingSpace));
-    }
+    try {
+      const spaceRes: any = await getCurrentSpace();
+      if (spaceRes?.code === 0) {
+        // 注意非空判断
+        if (spaceRes.data.bindingSpace)
+          spaceActions.setSpace(JSON.parse(spaceRes.data.bindingSpace));
+      }
+    } catch (e) {}
   },
   /**
    * 设置空间
@@ -548,10 +550,13 @@ export const SpaceStore = () => {
  */
 // 订阅
 subscribe(spaceStore, async () => {
-  console.log('configStore changed', spaceStore);
-  // localStorage.setItem('config-store', JSON.stringify(spaceStore));
+  console.log('spaceStore changed', spaceStore);
   if (userDerived.isLogin) {
-    await updateSpace(spaceStore);
+    try {
+      await updateSpace(spaceStore);
+    } catch (e) {
+      message.error('数据保存失败');
+    }
   } else {
     message.warning('请先登录，否则数据无法保存');
   }

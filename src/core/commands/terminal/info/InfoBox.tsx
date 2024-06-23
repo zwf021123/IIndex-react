@@ -4,7 +4,7 @@ const InfoBox: React.FC = () => {
       <div>关于本站：IIndex 程序员的定制化浏览器主页</div>
       <div>
         <a
-          href="https://github.com/zwf021123/IIndex"
+          href="https://github.com/zwf021123/IIndex-react"
           target="_blank"
           rel="noreferrer"
         >
