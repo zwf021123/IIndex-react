@@ -52,11 +52,21 @@ export const useTerminal = (
    * 输出列表
    */
   const [outputList, setOutputList] = useState<Terminal.OutputType[]>([]);
+  const outputListRef = useRef<Terminal.OutputType[]>([]);
+  // 同步闭包陷阱
+  useEffect(() => {
+    outputListRef.current = outputList;
+  }, [outputList]);
 
   /**
    * 折叠面板激活的 key
    */
   const [activeKeys, setActiveKeys] = useState<(string | number)[]>([]);
+  const activeKeysRef = useRef<(string | number)[]>([]);
+  // 同步闭包陷阱
+  useEffect(() => {
+    activeKeysRef.current = activeKeys;
+  }, [activeKeys]);
 
   /**
    * 加载状态(命令)
@@ -181,12 +191,12 @@ export const useTerminal = (
    */
   const toggleAllCollapse = () => {
     // 展开
-    if (activeKeys.length === 0) {
-      // const tempValue = outputList.map((_, index) => {
-      //   return index;
-      // });
+    if (activeKeysRef.current.length === 0) {
+      const tempValue = outputListRef.current.map((_, index) => {
+        return index;
+      });
       // 获取所有可折叠的 key
-      // setActiveKeys(tempValue);
+      setActiveKeys(tempValue);
     } else {
       // 折叠
       setActiveKeys([]);
@@ -340,7 +350,7 @@ export const useTerminal = (
   useEffect(() => {
     // 默认展开折叠面板
     if (outputList.length > 0) {
-      // 因为初次挂载后，outputList的长度变为3，所以activeKeys的长度默认多一个2
+      // 因为初次挂载后，outputList的长度变为3（一次渲染），所以activeKeys的长度默认多一个2
       setActiveKeys([...activeKeys, outputList.length - 1]);
       // 自动滚到底部
 
